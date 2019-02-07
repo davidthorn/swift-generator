@@ -1,0 +1,40 @@
+.main-wrapper {
+    display: flex;
+    flex: 1;
+    background: green;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.header {
+    height: 60px;
+    background: blue;
+}
+
+.inner {
+    display: flex;
+    flex: 1;
+    background: green;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.leftnavbar {
+    background-color: 'red';
+    flex: 0.2;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+}
+
+.main-body {
+    background-color: 'blue';
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+}
