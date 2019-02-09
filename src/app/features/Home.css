@@ -49,6 +49,7 @@
 
 .generator-options {
     display: flex;
+    flex-direction: column;
     flex:1;
     background: purple;
     margin: 0 30px 30px 30px;

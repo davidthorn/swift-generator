@@ -1,0 +1,56 @@
+.form-group {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    background: orangered;
+
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    background: palegreen;
+
+}
+
+.form-section-navbar {
+   height: 60px;
+   background-color: blueviolet;
+   flex: 1;
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-end;
+   align-items: center; 
+}
+
+.toggleButton {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    background: #444;
+    margin-right: 12px;
+}
+
+.form-section-header {
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.2em;
+    color: #222;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.form-section-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    background: palegreen;
+
+}

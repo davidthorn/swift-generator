@@ -4,6 +4,7 @@ import GeneratorType from "../components/GeneratorType.component";
 import InputField from "../components/InputField/InputField.component";
 import Highlight from 'react-highlight'
 import { CodeBox } from './Code'
+import FormComponent from "../components/Form/Form";
 
 interface HomeProps {
 
@@ -29,11 +30,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                     <div className="leftnavbar">
                     <GeneratorType ></GeneratorType>
                         <div className="generator-options">
-                            <InputField
-                                onChange={(v) => console.log(v)}
-                                label="Name"
-                                value="" placeholder="hello there"
-                                type="text" ></InputField>
+                            <FormComponent></FormComponent>
                         </div>
                     </div>
 
