@@ -1,6 +1,18 @@
 import React, { Component } from "react"
 import './Form.css'
 import InputField from "../InputField/InputField.component";
+import { SelectOption } from "../select-option/SelectOption";
+import { dataStructureTypes, dataStructureTypesOptions, DataStructureType } from "../../resources/dataStructureType";
+import { accessLevelTypes, accessLevelTypesOptions, AccessLevel } from "../../resources/accessLevelType";
+import DataStructureForm from "../DataStructureForm/DataStructureForm";
+
+interface DataStructure {
+    name: string
+    extends?: string
+    implements?: string[]
+    accessControl:AccessLevel
+    type: DataStructureType
+}
 
 interface FormComponentProps {
 
@@ -23,31 +35,7 @@ export default class FormComponent extends Component<FormComponentProps, FormCom
         return (
             
            <div className="form-group">
-           <div className="form-section">
-                <div className="form-section-navbar">
-                    <h1 className="form-section-header">Data Structure Form</h1>
-                    <div className="toggleButton"></div>
-                </div>
-                <div className="form-section-inner">
-                    <InputField
-                    onChange={(v) => console.log(v)}
-                    label="Name"
-                    value="" placeholder="hello there"
-                    type="text" ></InputField>
-                    <InputField
-                    onChange={(v) => console.log(v)}
-                    label="Name"
-                    value="" placeholder="hello there"
-                    type="text" ></InputField>
-                    <InputField
-                    onChange={(v) => console.log(v)}
-                    label="Name"
-                    value="" placeholder="hello there"
-                    type="text" ></InputField>
-                </div>
-           </div>
-                
-                
+                <DataStructureForm></DataStructureForm>
            </div>
         )
     }
