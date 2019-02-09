@@ -1,4 +1,5 @@
-import React, { Component, memo } from "react"
+import React, { Component } from "react"
+import { Params, MethodBlock } from '../resources/methods'
 
 interface MethodProperty {
     arc?: 'unowned' | 'weak'
@@ -12,20 +13,7 @@ interface MethodProperty {
     readOnly?: boolean
 }
 
-interface MethodBlock {
-    access: 'public' | 'private' | 'internal' | 'fileprivate' 
-    params: Params[]
-    name: string | 'init'
-    returnType?: string
-    overrides?: boolean
-}
 
-interface Params {
-    name?: string
-    label: string
-    value: string
-    optional: boolean 
-}
 
 interface CodeBoxProps {
     access: 'public' | 'private' | 'internal' | 'fileprivate' | undefined
