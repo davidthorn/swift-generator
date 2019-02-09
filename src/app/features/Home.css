@@ -23,7 +23,7 @@
 
 .leftnavbar {
     background-color: 'red';
-    flex: 0.2;
+    flex: 0.3;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
@@ -31,10 +31,31 @@
 }
 
 .main-body {
+    display: flex;
     background-color: 'blue';
-    flex: 1;
+    flex: 0.7;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
 
+.generator-type {
+    display: flex;
+    height: 60px;
+    margin: 30px;
+}
+
+.generator-options {
+    display: flex;
+    flex:1;
+    background: purple;
+    margin: 0 30px 30px 30px;
+}
+
+textarea {
+    display: flex;
+    margin: 30px;
+    flex: 0.8;
 }

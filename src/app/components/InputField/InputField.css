@@ -1,0 +1,21 @@
+.field-group{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 20px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+label {
+    font-size: 1.3em;
+    color: #111;
+    margin-bottom: 3px;
+    display: block;
+}
+
+input{
+   
+    border: 1px solid red;
+    height: 35px;
+    text-indent: 8px;
+
+}
