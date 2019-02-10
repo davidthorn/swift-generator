@@ -6,9 +6,7 @@ interface MethodsListProps {
     methods: MethodBlock[]
 }
 
-interface MethodsListState {
-    
-}
+interface MethodsListState { }
 
 export default class MethodsList extends Component<MethodsListProps, MethodsListState> {
 
@@ -21,7 +19,7 @@ export default class MethodsList extends Component<MethodsListProps, MethodsList
     render() {
 
         let items = this.props.methods.map(i => {
-            return (<li>Item {i.name}</li>)
+            return (<li key={i.id}>Item {i.name}</li>)
         })
 
         return (

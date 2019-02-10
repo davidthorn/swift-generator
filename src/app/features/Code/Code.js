@@ -39,7 +39,7 @@ ${ this.props.access} ${this.props.type} ${this.props.name}${this.getExtends()} 
 
     ${ this.getInit()}
 
-    ${ this.getMethods()}
+    ${this.getMethods()}
 
 }
       

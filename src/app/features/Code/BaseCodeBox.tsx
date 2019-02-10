@@ -30,8 +30,9 @@ class BaseCodeBox extends Component<CodeBoxProps> {
      */
     getInit(): string {
         if(this.props.init === undefined) return ''
-        const { access , params, overrides } = this.props.init
+        const { access , params, overrides, id } = this.props.init
         let method = this.toMethod({
+            id,
             name: 'init',
             access,
             params,
@@ -143,7 +144,8 @@ class BaseCodeBox extends Component<CodeBoxProps> {
         const access = `${this.toAccess(method.access)}${overrides}${func}${name}`
         const callSuper = method.overrides !== undefined && method.overrides === true ? this.callMethod(method , method.overrides || false) : 'fatalError("${name} Not yet implemented")'
  
-        return `${access}(${t.join(', ')})${name !== 'init' ? this.toReturnType(method.returnType) : ''} {
+        return `
+    ${access}(${t.join(', ')})${name !== 'init' ? this.toReturnType(method.returnType) : ''} {
         ${callSuper}
     }`
     }
@@ -188,7 +190,7 @@ class BaseCodeBox extends Component<CodeBoxProps> {
         let methods: string[] = []
         if(this.props.methods === undefined) return ''
         methods = this.props.methods.map(this.toMethod , this)
-        return methods.join('\n\n')
+        return methods.join('\n')
     }
 
     /**

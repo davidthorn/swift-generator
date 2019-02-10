@@ -32,9 +32,19 @@ export interface Params {
 }
 
 export interface MethodBlock {
+    id: string
     access: AccessLevel
     params: Params[]
     name: string | 'init'
+    returnType?: string
+    overrides?: boolean
+}
+
+export interface RawMethodBlock {
+    id?: string
+    access: AccessLevel
+    params: Params[]
+    name?: string
     returnType?: string
     overrides?: boolean
 }

@@ -6,6 +6,9 @@ import './MethodsList.style.css';
 import { MethodsListFeatureProps } from "./MethodsListFeatureProps";
 import { MethodsListFeatureState } from "./MethodsListFeatureState";
 import { MethodsListFeatureViews } from "./MethodsListFeatureViews";
+import { MethodBlockForm } from "../../components/MethodForm/MethodForm";
+import { MethodBlock, RawMethodBlock } from "../../resources/methods";
+import { AccessLevel } from "../../resources/accessLevelType";
 
 /**
  * A Table showing all methods which the currently selected data structure contains
@@ -27,49 +30,31 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
         this.state = {
             methods: this.props.methods,
             view: MethodsListFeatureViews.list,
-            prevView: []
+            prevView: [],
+            formParams: undefined
         }
     }
 
+    
+    componentDidUpdate(prevProps, prevState, snap){
+        if(prevProps.view === this.props.view) return
+        this.navigate(this.props.view , this.state.formParams)
+    }
     /**
      * Navigates the methods list between the form and the table view
      *
      * @param {MethodsListFeatureViews} page
      * @memberof MethodsListFeature
      */
-    navigate(page: MethodsListFeatureViews) {
+    navigate(page: MethodsListFeatureViews , params?: RawMethodBlock) {
         this.setState({
-            prevView: this.state.prevView.concat([this.state.view]),
-            view: page
+            prevView: page === MethodsListFeatureViews.form ? [this.state.view] : [],
+            view: page,
+            formParams: params
         })
     }
 
-    /**
-     * renders the methods list feature
-     *
-     * @returns
-     * @memberof MethodsListFeature
-     */
-    render() {
-
-        return (
-            <div className="methods-list-view">
-                <Navbar
-                    title={this.getPageMainTitle(this.state.view)}
-                    rightButtons={this.getRightButtons(this.state.view)}
-                    shouldShowBackButton={this.shouldShowBackButton.bind(this)}
-                    onBackPress={this.navbarBackButtonPressed.bind(this)}
-                ></Navbar>
-
-                <div className="methods-list-view-body">
-                    {this.getCurrentView(this.state.view)}
-                </div>
-
-
-            </div>
-        )
-    }
-
+   
     /**
      *  Returns true if the states prevView array contains more than 0 views
      *
@@ -90,11 +75,12 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
      */
     protected navbarBackButtonPressed() {
         if (this.state.prevView.length === 0) throw new Error('The button should not be displayed when it has 0 items')
-        const route = this.state.prevView.pop()
-
-        this.setState({
-            view: route!,
-            prevView: this.state.prevView
+        this.props.backButtonPressed(() => {
+            const route = this.state.prevView.pop()
+            this.setState({
+                view: route!,
+                prevView: this.state.prevView
+            })
         })
     }
 
@@ -134,12 +120,42 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
                 return [{
                     id: 'add',
                     onPress: () => {
-                        this.navigate(MethodsListFeatureViews.form);
+                        const raw: RawMethodBlock = {
+                            access: AccessLevel.internal,
+                            params: []
+                        }
+                        this.props.addButtonPressed(() => {
+                            this.navigate(MethodsListFeatureViews.form, raw);
+                        })
+                        
                     }
                 }];
                 break;
             default: return [];
         }
+    }
+
+    protected updateMethods(method: MethodBlock ) {
+    
+        let methods = this.state.methods
+
+        if(methods.filter(i => i.id === method.id).length !== 1) {
+            methods.push(method)
+        } else {
+            methods = methods.map(i => { return i.id === method.id ? method : i })
+        }
+
+        this.setState((state) => {
+            return {
+                prevView: state.prevView.splice(0, state.prevView.length - 1),
+                view: MethodsListFeatureViews.list,
+                formParams: undefined,
+                methods: methods
+            }
+        }, () => {
+            this.props.updated(this.state.methods)
+        })
+
     }
 
     /**
@@ -152,12 +168,20 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
     protected getCurrentView(view: MethodsListFeatureViews): JSX.Element {
         switch (view) {
             case MethodsListFeatureViews.form:
-                return (<div>
-                    <div className="save-method-button" onClick={() => {
-                        this.navigate(MethodsListFeatureViews.list);
-                    }}>Save Button</div>
+            if(this.state.formParams === undefined) throw new Error('Form Params cannot be undefined')
+            return (
+                <MethodBlockForm
+                method={this.state.formParams}
+                onSubmit={this.updateMethods.bind(this)}
+                />
+                )
+                // return (<div>
 
-                </div>);
+                //     <div className="save-method-button" onClick={() => {
+                //         this.navigate(MethodsListFeatureViews.list);
+                //     }}>Save Button</div>
+
+                // </div>);
             case MethodsListFeatureViews.list:
                 return (<div className="methods-list-wrapper">
                     <div className="methods-list-navbar">
@@ -169,5 +193,32 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
                 </div>);
         }
     }
+
+     /**
+     * renders the methods list feature
+     *
+     * @returns
+     * @memberof MethodsListFeature
+     */
+    render() {
+
+        return (
+            <div className="methods-list-view">
+                <Navbar
+                    title={this.getPageMainTitle(this.state.view)}
+                    rightButtons={this.getRightButtons(this.state.view)}
+                    shouldShowBackButton={this.shouldShowBackButton.bind(this)}
+                    onBackPress={this.navbarBackButtonPressed.bind(this)}
+                ></Navbar>
+
+                <div className="methods-list-view-body">
+                    {this.getCurrentView(this.state.view)}
+                </div>
+
+
+            </div>
+        )
+    }
+
 }
 

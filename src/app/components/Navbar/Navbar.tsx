@@ -45,6 +45,7 @@ export class Navbar extends Component<NavbarProps, NavbarState> {
         return this.props.rightButtons.map(i => {
             return (
                 <div
+                    key={i.id}
                     className="navbar-right-button"
                     onClick={() => {
                         i.onPress(i)

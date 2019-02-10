@@ -75,7 +75,7 @@ export default class InputField extends Component<InputFieldProps, InputFieldSta
         return (
             <span className="error-holder">
                 <ul>
-                    {errors.map(i => (<li>{i}</li>))}
+                    {errors.map(i => (<li key={i}>{i}</li>))}
                 </ul>
             </span>
         );

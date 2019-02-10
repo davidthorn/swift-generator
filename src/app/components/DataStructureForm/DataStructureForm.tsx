@@ -9,47 +9,51 @@ import InputField from "../InputField/InputField.component";
 import { SelectOption } from "../select-option/SelectOption";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { DataStructureValidate } from "./Validate";
+import MethodsList from "../MethodsList/MethodsList";
+import { MethodsListFeature } from "../../features/Methods/MethodsList.feature";
+import { MethodsListFeatureViews } from "../../features/Methods/MethodsListFeatureViews";
 
 enum DataStructureFormFields {
-    name = 'name' ,
+    name = 'name',
     accessLevel = 'accessLevel',
     extends = 'extends',
     implements = 'implements',
     methods = 'methods',
     properties = 'properties',
-    type= 'type'
+    type = 'type'
 }
 
 enum DataStructureFieldLabels {
-    name = 'Name' ,
+    name = 'Name',
     accessLevel = 'Access Level',
     extends = 'Extends',
     implements = 'Implements (comma separated)',
     methods = 'Methods',
     properties = 'Properties',
-    type= 'Type',
+    type = 'Type',
     submit = 'Submit'
 }
 
 enum DataStructureFieldPlaceholder {
-    name = 'Enter a structure name' ,
+    name = 'Enter a structure name',
     accessLevel = 'Choose an access level',
     extends = 'Enter an Extendable structure name',
     implements = 'Enters a comma separated list of data structures',
-    type= 'Choose a type'
+    type = 'Choose a type'
 }
 
-type  DataStructureFormAllowedFieldValues = undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]
+type DataStructureFormAllowedFieldValues = undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]
 
 interface DataStructureFormProps {
     structure: RawDataStructure
     onSubmit: (structure: DataStructure) => void
-    
+
 }
 
 interface DataStructureFormState {
     structure: RawDataStructure
     errors: { [key: string]: FieldError[] }
+    formActive: boolean
 }
 
 
@@ -59,7 +63,8 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         super(props, state)
         this.state = {
             structure: props.structure,
-            errors: {}
+            errors: {},
+            formActive: false
         }
 
     }
@@ -109,23 +114,23 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
      * @param {DataStructureFormAllowedFieldValues} [value]
      * @memberof DataStructureForm
      */
-    valueChanged(key:  DataStructureFormFields , value?: DataStructureFormAllowedFieldValues) {
+    valueChanged(key: DataStructureFormFields, value?: DataStructureFormAllowedFieldValues) {
         this.setState((state) => {
-            switch(key) {
+            switch (key) {
                 case DataStructureFormFields.type:
                     state.structure[key] = (value as string).split('_')[1] as DataStructureType
-                break
+                    break
                 case DataStructureFormFields.accessLevel:
                     state.structure[key] = (value as string).split('_')[1] as AccessLevel
-                break;
+                    break;
                 case DataStructureFormFields.extends:
                     const extends_value = (value as string).trim()
-                    state.structure[key] = extends_value.length > 0 ? extends_value : undefined 
+                    state.structure[key] = extends_value.length > 0 ? extends_value : undefined
                     break
                 default:
                     state.structure[key] = value
             }
-            
+
             return state
         })
     }
@@ -145,6 +150,113 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         })
     }
 
+    protected formElements(formActive: boolean): JSX.Element | undefined {
+
+        if (formActive) return undefined
+
+        const data = this.state.structure
+        return (
+            <React.Fragment>
+                <InputField
+                    errors={this.errors('name')}
+                    key="name"
+                    onChange={(v) => this.valueChanged(DataStructureFormFields.name, v)}
+                    label={DataStructureFieldLabels.name}
+                    value={data.name || ''}
+                    placeholder={DataStructureFieldPlaceholder.name}
+                    type="text" />
+
+                <SelectOption
+                    key="type"
+                    options={dataStructureTypesOptions}
+                    id=""
+                    onChange={(v) => this.valueChanged(DataStructureFormFields.type, v)}
+                    defaultOption=""
+                    label={DataStructureFieldLabels.type}
+                    name=""
+                />
+
+                <SelectOption
+                    options={accessLevelTypesOptions}
+                    id=""
+                    onChange={(v) => this.valueChanged(DataStructureFormFields.accessLevel, v)}
+                    defaultOption=""
+                    key="accessLevel"
+                    label={DataStructureFieldLabels.accessLevel}
+                    name=""
+                />
+
+                <InputField
+                    errors={this.errors('extends')}
+                    onChange={(v) => this.valueChanged(DataStructureFormFields.extends, v)}
+                    label={DataStructureFieldLabels.extends}
+                    value={data.extends || ''}
+                    key="extends"
+                    placeholder={DataStructureFieldPlaceholder.extends}
+                    type="text" />
+
+                <InputField
+                    errors={this.errors('implements')}
+                    onChange={(v) => this.valueChanged(DataStructureFormFields.implements, v.split(',').map(m => m.trim()))}
+                    label={DataStructureFieldLabels.implements}
+                    value={data.implements.join(',')}
+                    key="implements"
+                    placeholder={DataStructureFieldPlaceholder.implements}
+                    type="text" />
+            </React.Fragment>
+
+        )
+    }
+
+    protected formButton(formActive: boolean): JSX.Element | undefined {
+        if (formActive) return undefined
+        return (
+            <SubmitButton
+                key="submit_button"
+                title={DataStructureFieldLabels.submit}
+                onPress={() => {
+                    this.validate()
+                }}
+            />
+        )
+    }
+
+    protected methodsList(formActive: boolean): JSX.Element {
+
+        return (
+            <MethodsListFeature
+                view={formActive === true ? MethodsListFeatureViews.form : MethodsListFeatureViews.list}
+                backButtonPressed={() => {
+                    this.setState(() => {
+                        return {
+                            formActive: false
+                        }
+                    })
+                }}
+                addButtonPressed={(completion) => {
+                    console.log('add button pressed')
+                    this.setState(() => {
+                        return {
+                            formActive: true
+                        }
+                    }, completion)
+
+                }}
+                methods={this.state.structure.methods}
+                updated={(methods) => {
+                    this.setState((state) => {
+                        state.structure.methods = methods
+                        return {
+                            ...state,
+                            formActive: false,
+                            structure: state.structure
+                        }
+                    })
+                }}
+            />
+        )
+    }
+
     /**
      * 
      *
@@ -162,62 +274,14 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     <div className="toggleButton"></div>
                 </div>
                 <div className="form-section-inner">
-                    <InputField
-                        errors={this.errors('name')}
-                        key="name"
-                        onChange={(v) => this.valueChanged(DataStructureFormFields.name, v)}
-                        label={DataStructureFieldLabels.name}
-                        value= {data.name || ''}
-                        placeholder={DataStructureFieldPlaceholder.name}
-                        type="text" />
 
-                    <SelectOption
-                        key="type"
-                        options={dataStructureTypesOptions}
-                        id=""
-                        onChange={(v) => this.valueChanged(DataStructureFormFields.type, v)}
-                        defaultOption=""
-                        label={DataStructureFieldLabels.type}
-                        name=""
-                    />
+                    {this.formElements(this.state.formActive)}
 
-                    <SelectOption
-                        options={accessLevelTypesOptions}
-                        id=""
-                        onChange={(v) => this.valueChanged(DataStructureFormFields.accessLevel, v)}
-                        defaultOption=""
-                        key="accessLevel"
-                        label={DataStructureFieldLabels.accessLevel}
-                        name=""
-                    />
+                    {this.methodsList(this.state.formActive)}
 
-                    <InputField
-                        errors={this.errors('extends')}
-                        onChange={(v) => this.valueChanged(DataStructureFormFields.extends, v)}
-                        label={DataStructureFieldLabels.extends}
-                        value= {data.extends || ''}
-                        key="extends"
-                        placeholder={DataStructureFieldPlaceholder.extends}
-                        type="text" />
 
-                    <InputField
-                        errors={this.errors('implements')}
-                        onChange={(v) => this.valueChanged(DataStructureFormFields.implements, v.split(',').map(m => m.trim()))}
-                        label={DataStructureFieldLabels.implements}
-                        value= {data.implements.join(',')}
-                        key="implements"
-                        placeholder={DataStructureFieldPlaceholder.implements}
-                        type="text" />
+                    {this.formButton(this.state.formActive)}
 
-                    <SubmitButton
-                        key="submit_button"
-                        title={DataStructureFieldLabels.submit}
-                        onPress={() => {
-                            this.validate()
-                        }}
-                    >
-
-                    </SubmitButton>
 
                 </div>
             </div>

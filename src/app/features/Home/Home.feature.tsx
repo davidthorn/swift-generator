@@ -11,6 +11,7 @@ import './Home.css';
 import { HomeProps } from "./HomeProps";
 import { HomeState } from "./HomeState";
 import { Pages } from "./Pages";
+import { MethodsListFeatureViews } from "../Methods/MethodsListFeatureViews";
 
 /**
  *
@@ -70,9 +71,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
     protected updateStructure(methods: MethodBlock[]) {
         const struct = this.state.dataStructure
         struct.methods = methods
-        this.setState({
-            dataStructure: struct
-        });
+        this.updateState(struct)
     }
 
     /**
@@ -135,6 +134,13 @@ class HomeFeature extends Component<HomeProps, HomeState> {
     protected getMethodsListFeature(): JSX.Element {
         return (
             <MethodsListFeature
+                view={MethodsListFeatureViews.list}
+                addButtonPressed={(completion) => {
+                    completion()
+                }}
+                backButtonPressed={(completion) => {
+                    completion()
+                }}
                 updated={this.updateStructure.bind(this)}
                 methods={this.state.dataStructure.methods}
             />
