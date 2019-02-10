@@ -3,6 +3,7 @@ import { DataStructure, RawDataStructure } from "../../resources/dataStructure";
 import DataStructureForm from "../DataStructureForm/DataStructureForm";
 import { MethodBlock } from '../../resources/methods'
 import './Form.css';
+import { MethodProperty } from "../../resources/MethodProperty";
 
 /**
  *
@@ -10,6 +11,8 @@ import './Form.css';
  * @interface FormComponentProps
  */
 interface FormComponentProps {
+    editPropertyButtonPressed: (property: MethodProperty) => void
+    deletePropertyButtonPressed: (property: MethodProperty) => void
     editButtonPressed: (method: MethodBlock) => void
     deleteButtonPressed: (method: MethodBlock) => void
     structure: RawDataStructure
@@ -55,6 +58,8 @@ export class FormComponent extends Component<FormComponentProps, FormComponentSt
             
            <div className="form-group">
                 <DataStructureForm 
+                editPropertyButtonPressed={this.props.editPropertyButtonPressed}
+                deletePropertyButtonPressed={this.props.deletePropertyButtonPressed}
                 editButtonPressed={this.props.editButtonPressed}
                 deleteButtonPressed={this.props.deleteButtonPressed}
                 structure={this.props.structure}

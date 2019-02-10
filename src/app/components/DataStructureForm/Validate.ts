@@ -3,7 +3,7 @@ import { accessLevelTypes } from '../../resources/accessLevelType';
 import { dataStructureTypes } from '../../resources/dataStructureType';
 import { RawDataStructure, DataStructure } from '../../resources/dataStructure';
 
-const implementsValidation = Joi.string().regex(/^[\w]+$/).required().label('Method Name').error((d) => {
+const implementsValidation = Joi.string().regex(/^[\w]+$/).optional().label('Method Name').error((d) => {
     return d.map(l => {
         switch(l.type) {
             case 'any.empty': 
@@ -40,7 +40,7 @@ const DataStructureSchema = Joi.object({
         })
     }),
 
-    implements: Joi.array().items(implementsValidation).min(0).required().label('Implements').error(() => {
+    implements: Joi.array().items(implementsValidation).min(0).optional().label('Implements').error(() => {
         return "Implementations has invalid content"
     }),
     extends: Joi.string().regex(/^[\w\d]+$/).optional().allow('').label('Extends').error((d) => {

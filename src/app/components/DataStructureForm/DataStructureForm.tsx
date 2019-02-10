@@ -4,7 +4,7 @@ import { MethodsListFeatureViews } from "../../features/Methods/MethodsListFeatu
 import { AccessLevel, accessLevelTypesOptions } from "../../resources/accessLevelType";
 import { DataStructure, RawDataStructure } from "../../resources/dataStructure";
 import { DataStructureType, dataStructureTypesOptions } from "../../resources/dataStructureType";
-import { MethodProperty } from "../../resources/MethodProperty";
+import { MethodProperty, RawMethodProperty } from "../../resources/MethodProperty";
 import { MethodBlock } from "../../resources/methods";
 import { FieldError } from "../Form";
 import InputField from "../InputField/InputField.component";
@@ -13,6 +13,9 @@ import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { DataStructureValidate } from "./Validate";
 import '../Form/Form.css'
 import { MethodBlockForm } from "../MethodForm/MethodForm";
+import { MethodPropertyForm } from "../PropertyForm/PropertyForm";
+import { PropertiesListFeature } from "../../features/Properties/PropertiesList.feature";
+import { PropertiesListFeatureViews } from "../../features/Properties/PropertiesListFeatureViews";
 
 enum DataStructureFormFields {
     name = 'name',
@@ -46,6 +49,8 @@ enum DataStructureFieldPlaceholder {
 type DataStructureFormAllowedFieldValues = undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]
 
 interface DataStructureFormProps {
+    editPropertyButtonPressed: (property: MethodProperty) => void
+    deletePropertyButtonPressed: (property: MethodProperty) => void
     editButtonPressed: (method: MethodBlock) => void
     deleteButtonPressed: (method: MethodBlock) => void
     structure: RawDataStructure
@@ -55,8 +60,10 @@ interface DataStructureFormProps {
 interface DataStructureFormState {
     structure: RawDataStructure
     errors: { [key: string]: FieldError[] }
-    formActive: boolean,
-    methodParams?: MethodBlock
+    methodFormActive: boolean,
+    propertyFormActive: boolean,
+    methodParams?: MethodBlock,
+    propertyParams?: RawMethodProperty
 }
 
 
@@ -67,7 +74,8 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         this.state = {
             structure: props.structure,
             errors: {},
-            formActive: false
+            methodFormActive: false,
+            propertyFormActive: false
         }
 
     }
@@ -153,9 +161,9 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         })
     }
 
-    protected formElements(formActive: boolean): JSX.Element | undefined {
+    protected formElements(methodFormActive: boolean): JSX.Element | undefined {
 
-        if (formActive) return undefined
+        if (methodFormActive) return undefined
 
         const data = this.state.structure
         return (
@@ -211,8 +219,8 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         )
     }
 
-    protected formButton(formActive: boolean): JSX.Element | undefined {
-        if (formActive) return undefined
+    protected formButton(methodFormActive: boolean): JSX.Element | undefined {
+        if (methodFormActive) return undefined
         return (
             <SubmitButton
                 key="submit_button"
@@ -224,7 +232,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         )
     }
 
-    protected methodsList(formActive: boolean, method?: MethodBlock): JSX.Element {
+    protected methodsList(methodFormActive: boolean, method?: MethodBlock): JSX.Element {
 
         if(method !== undefined) {
             return (
@@ -238,7 +246,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                             ...state,
                             structure: struct,
                             methodParams: undefined,
-                            formActive: false
+                            methodFormActive: false
                         }
                     }, () => {
                         this.props.onSubmit(this.state.structure as DataStructure, false)
@@ -252,28 +260,26 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
             <MethodsListFeature
                 deleteButtonPressed={this.props.deleteButtonPressed}
                 editButtonPressed={(method) => {
-                    console.log('edit button pressed')
                     this.setState((state) => {
                         return {
                             ...state,
                             methodParams: method,
-                            formActive: true
+                            methodFormActive: true
                         }
                     })
                 }}
-                view={formActive === true ? MethodsListFeatureViews.form : MethodsListFeatureViews.list}
+                view={methodFormActive === true ? MethodsListFeatureViews.form : MethodsListFeatureViews.list}
                 backButtonPressed={() => {
                     this.setState(() => {
                         return {
-                            formActive: false
+                            methodFormActive: false
                         }
                     })
                 }}
                 addButtonPressed={(completion) => {
-                    console.log('add button pressed')
                     this.setState(() => {
                         return {
-                            formActive: true
+                            methodFormActive: true
                         }
                     }, completion)
 
@@ -284,7 +290,81 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                         state.structure.methods = methods
                         return {
                             ...state,
-                            formActive: false,
+                            methodFormActive: false,
+                            methodParams: undefined,
+                            structure: state.structure
+                        }
+                    }, () => {
+                        this.props.onSubmit(this.state.structure as DataStructure , false)
+                    })
+                }}
+            />
+        )
+    }
+
+    protected propertyList(methodFormActive: boolean, property?: RawMethodProperty): JSX.Element {
+
+        if(property !== undefined) {
+            return (
+                <MethodPropertyForm
+                property={property}
+                onSubmit={(updatedProperty) => {
+                    this.setState((state) => {
+                        const struct =  state.structure
+                        struct.properties = struct.properties.map(i => i.id === updatedProperty.id ? updatedProperty : i)
+                        return {
+                            ...state,
+                            structure: struct,
+                            propertyParams: undefined,
+                            propertyFormActive: false
+                        }
+                    }, () => {
+                        this.props.onSubmit(this.state.structure as DataStructure, false)
+                    })
+                }}
+                />
+            )
+        } 
+
+        return (
+
+            <PropertiesListFeature
+
+                deleteButtonPressed={this.props.deletePropertyButtonPressed}
+                editButtonPressed={(property) => {
+                    console.log('edit button pressed')
+                    this.setState((state) => {
+                        return {
+                            ...state,
+                            propertyParams: property as RawMethodProperty,
+                            propertyFormActive: true,
+                        }
+                    })
+                }}
+                view={methodFormActive === true ? PropertiesListFeatureViews.form : PropertiesListFeatureViews.list}
+                backButtonPressed={() => {
+                    this.setState(() => {
+                        return {
+                            propertyFormActive: false
+                        }
+                    })
+                }}
+                addButtonPressed={(completion) => {
+                    console.log('add button pressed')
+                    this.setState(() => {
+                        return {
+                            propertyFormActive: true
+                        }
+                    }, completion)
+
+                }}
+                properties={this.state.structure.properties}
+                updated={(properties) => {
+                    this.setState((state) => {
+                        state.structure.properties = properties
+                        return {
+                            ...state,
+                            propertyFormActive: false,
                             methodParams: undefined,
                             structure: state.structure
                         }
@@ -313,9 +393,10 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     <div className="toggleButton"></div>
                 </div>
                 <div className="form-section-inner">
-                    {this.formElements(this.state.formActive)}
-                    {this.methodsList(this.state.formActive, this.state.methodParams)}
-                    {this.formButton(this.state.formActive)}
+                    {this.formElements(this.state.methodFormActive || this.state.propertyFormActive)}
+                    {this.state.methodFormActive ? undefined : this.propertyList(this.state.propertyFormActive, this.state.propertyParams)}
+                    {this.state.propertyFormActive ? undefined : this.methodsList(this.state.methodFormActive, this.state.methodParams)}
+                    {this.formButton(this.state.methodFormActive || this.state.propertyFormActive)}
                 </div>
             </div>
 

@@ -13,6 +13,7 @@ import { HomeState } from "./HomeState";
 import { Pages } from "./Pages";
 import { MethodsListFeatureViews } from "../Methods/MethodsListFeatureViews";
 import { MethodPropertyForm } from "../../components/PropertyForm/PropertyForm";
+import { MethodProperty } from "../../resources/MethodProperty";
 
 /**
  *
@@ -133,6 +134,22 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         this.updateState(struct, this.state.page)
     }
 
+    deleteProperty(property: MethodProperty) {
+        const _save_properties = this.state.dataStructure.properties.filter(i => i.id !== property.id)
+        const struct = this.state.dataStructure
+        struct.properties = _save_properties
+        this.updateState(struct, this.state.page)
+    }
+
+    editProperty(property: MethodProperty) {
+        const _save_properties = this.state.dataStructure.properties.map(i => {
+            return i.id === property.id ? property : i
+        })
+        const struct = this.state.dataStructure
+        struct.properties = _save_properties
+        this.updateState(struct, this.state.page)
+    }
+
     /**
      *
      *
@@ -168,6 +185,8 @@ class HomeFeature extends Component<HomeProps, HomeState> {
     protected getInformationFeature(): JSX.Element {
         return (
             <InformationFeature
+                deletePropertyButtonPressed={this.deleteProperty.bind(this)}
+                editPropertyButtonPressed={this.editProperty.bind(this)}
                 deleteButtonPressed={this.deleteMethod.bind(this)}
                 editButtonPressed={this.editMethod.bind(this)}
                 structure={this.state.dataStructure}

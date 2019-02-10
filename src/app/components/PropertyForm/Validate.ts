@@ -17,11 +17,11 @@ enum MethodPropertySchemaErrorMessages {
 
 const MethodPropertySchema = Joi.object({
     id: Joi.string().optional(),
-    arc: Joi.string().allow(['unowned' , 'weak']).required().label('ARC'),
-    access: Joi.string().allow(accessLevelTypes).required().label('Access Level').error(() => {
+    arc: Joi.string().allow(['unowned' , 'weak' , 'none']).required().label('ARC'),
+    access: Joi.string().allow(accessLevelTypes).required().label('Access Level').default('internal').error(() => {
         return MethodPropertySchemaErrorMessages.access
     }),
-    overrides: Joi.boolean().optional(),
+    overrides: Joi.string().optional().default('no'),
     name: Joi.string().regex(/^[\w\d]+$/).required().label('Name').error((d) => {
         return d.map(l => {
             switch(l.type) {
@@ -56,9 +56,9 @@ const MethodPropertySchema = Joi.object({
             return l
         })
     }),
-    optional: Joi.string().allow(['yes' , 'no']).required().label('Optional'),
-    lazy: Joi.string().allow(['yes' , 'no']).required().label('Lazy'),
-    readyOnly: Joi.string().allow(['yes' , 'no']).required().label('Ready Only'),
+    optional: Joi.string().allow(['yes' , 'no']).optional().default('no').label('Optional'),
+    lazy: Joi.string().allow(['yes' , 'no']).optional().default('no').label('Lazy'),
+    readOnly: Joi.boolean().optional().default(false).label('Ready Only'),
     defaultValue: Joi.string().regex(/^[\w\d ]+$/).optional().label('Default Value').error((d) => {
         return d.map(l => {
             switch(l.type) {
@@ -81,7 +81,7 @@ const MethodPropertySchema = Joi.object({
  
  const MethodPropertyValidate = (structure: RawMethodProperty): Joi.ValidationResult<RawMethodProperty> => {
     return MethodPropertySchema.validate(structure, {
-        abortEarly: false
+        abortEarly: true
     })
 }
 

@@ -170,13 +170,19 @@ class BaseCodeBox extends Component<CodeBoxProps> {
         const typeText =  `${type}${isOptional ? '' : '?'}`
 
         const defaultValueStringified = type === 'String' ? `"${defaultValue}"` : defaultValue
-        const defaultValueText = defaultValue === undefined ? '' : ` = ${defaultValueStringified}`
+        const readOnlyString = ` {
+        return ${defaultValueStringified}
+    }
+        `
+        const isReadOnly = readOnly === undefined ? false: readOnly === true ? true : false
+        const defaultValueText = defaultValue === undefined ? '' : isReadOnly ? readOnlyString : ` = ${defaultValueStringified}`
 
-        const arcText = arc === undefined ? '' : `${arc} ` 
+        const arcText = arc === undefined || arc === 'none' ? '' : `${arc} ` 
 
-        const variableType = readOnly === undefined ? 'var ' : 'let '
+        const variableType = readOnly === undefined ? 'var ' : 'var '
 
-        const access = `${this.toAccess(property.access)}${arcText}${overridesText}${variableType}${name}: ${typeText}${defaultValueText}`
+        const access = `
+    ${this.toAccess(property.access)}${arcText}${overridesText}${variableType}${name}: ${typeText}${defaultValueText}`
         return access
     }
 
@@ -203,7 +209,7 @@ class BaseCodeBox extends Component<CodeBoxProps> {
         let properties: string[] = []
         if(this.props.properties === undefined) return ''
         properties = this.props.properties.map(this.toProperty , this)
-        return properties.join('\n\n')
+        return properties.join('\n')
     }
 
     /**

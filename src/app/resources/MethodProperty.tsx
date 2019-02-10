@@ -2,7 +2,7 @@ import { AccessLevel } from "./accessLevelType";
 
 export interface MethodProperty {
     id: string
-    arc?: 'unowned' | 'weak';
+    arc?: 'unowned' | 'weak' | 'none';
     access: 'public' | 'private' | 'internal' | 'fileprivate';
     overrides?: boolean;
     name: string;
@@ -15,7 +15,7 @@ export interface MethodProperty {
 
 export interface RawMethodProperty {
     id?: string
-    arc?: 'unowned' | 'weak';
+    arc?: 'unowned' | 'weak' | 'none';
     access: AccessLevel
     overrides?: boolean;
     name?: string;

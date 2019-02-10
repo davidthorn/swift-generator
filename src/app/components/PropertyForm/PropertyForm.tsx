@@ -139,6 +139,21 @@ export class MethodPropertyForm extends Component<MethodPropertyFormProps, Metho
                     const result: boolean = (value as string).split('_')[1] === 'yes' ? true : false
                     state.property[key] = result
                     break;
+                case MethodPropertyFormFields.readOnly:
+                    const result_readOnly: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    state.property[key] = result_readOnly
+                    break;
+                case MethodPropertyFormFields.arc:
+                    const result_arc: 'unowned' | 'none'  | 'weak' = (value as string).split('_')[1] as 'unowned' | 'none'  | 'weak'
+                    state.property[key] = result_arc
+                    break;
+                case MethodPropertyFormFields.optional:
+                    const result_optional: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    state.property[key] = result_optional
+                    break;
+                case MethodPropertyFormFields.lazy:
+                    const result_lazy: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    state.property[key] = result_lazy
                 default:
                     state.property[key] = (value as string | undefined)
             }
@@ -194,7 +209,7 @@ export class MethodPropertyForm extends Component<MethodPropertyFormProps, Metho
                         key="type"
                         onChange={(v) => this.valueChanged(MethodPropertyFormFields.type, v)}
                         label={MethodPropertyFormFieldLabels.type}
-                        value={data.name || ''}
+                        value={data.type || ''}
                         placeholder={MethodPropertyFormFieldPlacehodlers.type}
                         type="text" />
 
