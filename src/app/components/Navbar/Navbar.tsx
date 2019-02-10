@@ -50,6 +50,10 @@ export class Navbar extends Component<NavbarProps, NavbarState> {
                     onClick={() => {
                         i.onPress(i)
                     }}>
+                    <span className="navbar-right-button-span">
+                    <i className="fas fa-plus"></i>
+                    </span>
+                  
                 </div>
             )
         })
@@ -69,7 +73,9 @@ export class Navbar extends Component<NavbarProps, NavbarState> {
             <div
                 className="inner-navbar-back-button"
                 onClick={() => this.back()}>
-                back
+                <span>
+                    <i className="fas fa-arrow-left"></i>
+                </span>
             </div>
         );
     }

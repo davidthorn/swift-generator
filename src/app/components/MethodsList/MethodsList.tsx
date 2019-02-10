@@ -47,12 +47,12 @@ export default class MethodsList extends Component<MethodsListProps, MethodsList
                         { method.name }
                     </div>
                     <div className="col-edit-button">
-                        <SubmitButton title="Edit" onPress={() => { 
+                        <SubmitButton size='small' title="Edit" onPress={() => { 
                             this.editMethod(method)
                         }} />
                     </div>
                     <div className="col-delete-button">
-                        <SubmitButton title="Delete" onPress={() => { 
+                        <SubmitButton type='danger' size='small' title="Delete" onPress={() => { 
                             this.deleteMethod(method)
                         }} />
                     </div>

@@ -47,12 +47,12 @@ export default class PropertyList extends Component<PropertyListProps, PropertyL
                         { property.name }
                     </div>
                     <div className="col-edit-button">
-                        <SubmitButton title="Edit" onPress={() => { 
+                        <SubmitButton size='small' title="Edit" onPress={() => { 
                             this.editProperty(property)
                         }} />
                     </div>
                     <div className="col-delete-button">
-                        <SubmitButton title="Delete" onPress={() => { 
+                        <SubmitButton type='danger' size='small' title="Delete" onPress={() => { 
                             this.deleteProperty(property)
                         }} />
                     </div>

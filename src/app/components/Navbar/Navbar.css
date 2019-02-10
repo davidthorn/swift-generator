@@ -22,11 +22,29 @@
     border-right: 1px solid #a1a1a1;
 }
 
+.inner-navbar-back-button span {
+    color: #555;
+    font-size: 1.3em;
+}
+
 .navbar-right-button {
     width: 30px;
     height: 30px;
     margin-left: 10px;
-    background: red;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-right-button-span {
+    color: #555;
+    font-size: 1.3em;
+}
+
+.navbar-right-button img {
+    width: 30px;
+    height: 30px;
 }
 
 .inner-navbar-back-button,

@@ -7,6 +7,10 @@ import { SubmitButton } from "./SubmitButton";
  */
 export interface SubmitButtonProps {
     
+    size?: 'normal' | 'small' | 'medium'
+
+    type?: 'normal' | 'danger' | 'none'
+    
     /**
      *
      *

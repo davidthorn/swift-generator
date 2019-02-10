@@ -1,0 +1,95 @@
+.submit-button-small {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.submit-button-medium {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 30px;
+
+}
+
+.submit-button-normal  {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.small-btn span{
+    margin-right: 0px;
+    padding: 4px 8px 4px 8px;
+    font-size: 0.8em;
+    border-radius: 6px;
+}
+
+.normal-btn span{
+    margin-right: 0px;
+    padding: 4px 8px 4px 8px;
+    font-size: 0.8em;
+    border-radius: 6px;
+}
+
+.danger-btn span{
+    margin-right: 0px;
+    padding: 4px 8px 4px 8px;
+    font-size: 0.8em;
+    border-radius: 6px;
+}
+
+
+.normal-btn span{
+    background: rgb(3, 84, 138);
+    color: white;
+}
+
+.none-btn span {
+    background: transparent;
+    color: #555;
+}
+
+.danger-btn span {
+    background: rgb(107, 12, 12);
+    color: white;
+}
+
+.normal-btn  span:hover {
+    background: rgba(3, 84, 138, 0.438);
+    color: #555;
+    cursor: pointer;
+}
+
+.danger-btn span:hover {
+    background: rgb(107, 12, 12, 0.438);
+    color: #555;
+    cursor: pointer;
+}
+
+
+
+.submit-button-medium span{
+    margin-right: 20px;
+    padding: 10px 20px 10px 20px;
+    font-size: 0.9em;
+    color: white;
+    background: rgb(3, 84, 138);
+    border-radius: 10px;
+}
+
+.submit-button-normal span{
+    margin-right: 20px;
+    padding: 10px 20px 10px 20px;
+    font-size: 0.9em;
+    color: white;
+    background: rgb(3, 84, 138);
+    border-radius: 10px;
+}
