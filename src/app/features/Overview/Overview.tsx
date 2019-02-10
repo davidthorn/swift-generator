@@ -35,8 +35,6 @@ export class OverviewFeature extends Component<OverviewFeatureProps, OverviewFea
 
         const data = this.props.structure
 
-        console.log(data)
-
         return (
             <CodeBox 
                 access={data.accessLevel}

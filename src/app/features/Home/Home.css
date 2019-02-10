@@ -19,7 +19,6 @@
 }
 
 .leftnavbar {
-    background-color: red;
     flex: 0.3;
     max-width: 280px;
     flex-direction: column;
@@ -33,7 +32,7 @@
     display: flex;
     flex: 1;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: stretch;
     align-items: stretch;
     margin-right: 20px;
     margin-bottom: 20px;

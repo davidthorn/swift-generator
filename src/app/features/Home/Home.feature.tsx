@@ -68,13 +68,17 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         })
     }
 
+    /**
+     * Updates the structures methods silently
+     *
+     * @protected
+     * @param {MethodBlock[]} methods
+     * @memberof HomeFeature
+     */
     protected updateStructure(methods: MethodBlock[]) {
         const struct = this.state.dataStructure
         struct.methods = methods
         this.updateState(struct)
-        this.forceUpdate(() => {
-            console.log('forced update')
-        })
     }
 
     /**
@@ -85,7 +89,6 @@ class HomeFeature extends Component<HomeProps, HomeState> {
      * @memberof HomeFeature
      */
     protected updateState(structure: DataStructure, page: Pages = Pages.overview) {
-        console.log('upadting state' , structure)
         this.setState((state) => {
             const s = state.dataStructure
             structure.methods = s.methods
@@ -96,12 +99,17 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                 dataStructure: structure
             }
         }, () => {
-            console.log('upadting local storage')
             localStorage.setItem('structure', JSON.stringify(this.state.dataStructure));
         })
 
     }
 
+    /**
+     * Deletes the method from the structure
+     *
+     * @param {MethodBlock} method
+     * @memberof HomeFeature
+     */
     deleteMethod(method: MethodBlock) {
         const _save_methods = this.state.dataStructure.methods.filter(i => i.id !== method.id)
         const struct = this.state.dataStructure
@@ -109,6 +117,12 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         this.updateState(struct, this.state.page)
     }
 
+    /**
+     * Edits the methods on the structure
+     *
+     * @param {MethodBlock} method
+     * @memberof HomeFeature
+     */
     editMethod(method: MethodBlock) {
         const _save_methods = this.state.dataStructure.methods.map(i => {
             return i.id === method.id ? method : i
@@ -116,30 +130,6 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         const struct = this.state.dataStructure
         struct.methods = _save_methods
         this.updateState(struct, this.state.page)
-    }
-
-    /**
-     *
-     *
-     * @returns
-     * @memberof HomeFeature
-     */
-    render() {
-        return (
-            <div className="main-wrapper">
-                <div className="header"></div>
-                <div className="inner">
-                    <div className="leftnavbar">
-                        <StructureNavbar
-                            navigate={this.setPage.bind(this)}
-                        />
-                    </div>
-                    <div className="main-body">
-                        {this.getPageElement(this.state.page, this.state.dataStructure)}
-                    </div>
-                </div>
-            </div>
-        )
     }
 
     /**
@@ -214,11 +204,33 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                 return this.getOverviewFeature()
             case Pages.information:
                 return this.getInformationFeature()
-            // case Pages.methods:
-            //     return this.getMethodsListFeature(structure.methods)
             case Pages.properties:
                 return (<div>Properties</div>);
         }
+    }
+
+    /**
+     *
+     *
+     * @returns
+     * @memberof HomeFeature
+     */
+    render() {
+        return (
+            <div className="main-wrapper">
+                <div className="header"></div>
+                <div className="inner">
+                    <div className="leftnavbar">
+                        <StructureNavbar
+                            navigate={this.setPage.bind(this)}
+                        />
+                    </div>
+                    <div className="main-body">
+                        {this.getPageElement(this.state.page, this.state.dataStructure)}
+                    </div>
+                </div>
+            </div>
+        )
     }
 }
 

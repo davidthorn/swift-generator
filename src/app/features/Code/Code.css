@@ -1,0 +1,22 @@
+.code-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+ .code-wrapper pre {
+    flex: 1;
+    display: flex;
+    justify-content: stretch;
+    align-items: stretch;
+    
+    margin:0px;
+}
+
+.code-wrapper pre  code{
+    flex: 1;
+  
+    padding: 40px;
+} 
+

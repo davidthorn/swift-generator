@@ -1,6 +1,7 @@
 import React from 'react';
 import Highlight from 'react-highlight';
 import { BaseCodeBox } from './BaseCodeBox';
+import './Code.css'
 
 /**
  *
@@ -26,9 +27,8 @@ class CodeBox extends BaseCodeBox {
      * @memberof CodeBox
      */
     render() {
-
         return (
-            <div>
+            <div className="code-wrapper">
                 <Highlight language="swift">
                     {`
 import UIKit
