@@ -12,6 +12,7 @@ import { HomeProps } from "./HomeProps";
 import { HomeState } from "./HomeState";
 import { Pages } from "./Pages";
 import { MethodsListFeatureViews } from "../Methods/MethodsListFeatureViews";
+import { MethodPropertyForm } from "../../components/PropertyForm/PropertyForm";
 
 /**
  *
@@ -205,7 +206,16 @@ class HomeFeature extends Component<HomeProps, HomeState> {
             case Pages.information:
                 return this.getInformationFeature()
             case Pages.properties:
-                return (<div>Properties</div>);
+                return (
+                    <MethodPropertyForm
+                    property={{
+                        access: AccessLevel.fileprivate,
+                    }}
+                    onSubmit={() => {
+                        console.log('form submitted')
+                    }}
+                    />
+                );
         }
     }
 
