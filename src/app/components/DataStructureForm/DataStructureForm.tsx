@@ -12,6 +12,7 @@ import { SelectOption } from "../select-option/SelectOption";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { DataStructureValidate } from "./Validate";
 import '../Form/Form.css'
+import { MethodBlockForm } from "../MethodForm/MethodForm";
 
 enum DataStructureFormFields {
     name = 'name',
@@ -45,15 +46,17 @@ enum DataStructureFieldPlaceholder {
 type DataStructureFormAllowedFieldValues = undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]
 
 interface DataStructureFormProps {
+    editButtonPressed: (method: MethodBlock) => void
+    deleteButtonPressed: (method: MethodBlock) => void
     structure: RawDataStructure
-    onSubmit: (structure: DataStructure) => void
-
+    onSubmit: (structure: DataStructure, redirect: boolean) => void
 }
 
 interface DataStructureFormState {
     structure: RawDataStructure
     errors: { [key: string]: FieldError[] }
-    formActive: boolean
+    formActive: boolean,
+    methodParams?: MethodBlock
 }
 
 
@@ -74,7 +77,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         const { error, value } = DataStructureValidate(this.state.structure)
 
         if (error === null) {
-            this.props.onSubmit(value as DataStructure)
+            this.props.onSubmit(value as DataStructure , true)
         } else {
 
             let newErrors: { [key: string]: FieldError[] } = {}
@@ -221,10 +224,43 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         )
     }
 
-    protected methodsList(formActive: boolean): JSX.Element {
+    protected methodsList(formActive: boolean, method?: MethodBlock): JSX.Element {
+
+        if(method !== undefined) {
+            return (
+                <MethodBlockForm
+                method={method}
+                onSubmit={(updatedMethod) => {
+                    this.setState((state) => {
+                        const struct =  state.structure
+                        struct.methods = struct.methods.map(i => i.id === updatedMethod.id ? updatedMethod : i)
+                        return {
+                            ...state,
+                            structure: struct,
+                            methodParams: undefined,
+                            formActive: false
+                        }
+                    }, () => {
+                        this.props.onSubmit(this.state.structure as DataStructure, false)
+                    })
+                }}
+                />
+            )
+        } 
 
         return (
             <MethodsListFeature
+                deleteButtonPressed={this.props.deleteButtonPressed}
+                editButtonPressed={(method) => {
+                    console.log('edit button pressed')
+                    this.setState((state) => {
+                        return {
+                            ...state,
+                            methodParams: method,
+                            formActive: true
+                        }
+                    })
+                }}
                 view={formActive === true ? MethodsListFeatureViews.form : MethodsListFeatureViews.list}
                 backButtonPressed={() => {
                     this.setState(() => {
@@ -249,8 +285,11 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                         return {
                             ...state,
                             formActive: false,
+                            methodParams: undefined,
                             structure: state.structure
                         }
+                    }, () => {
+                        this.props.onSubmit(this.state.structure as DataStructure , false)
                     })
                 }}
             />
@@ -265,8 +304,6 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
      */
     render() {
 
-        const data = this.state.structure
-
         return (
             <div className="form-section">
                 <div className="form-section-navbar">
@@ -276,15 +313,9 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     <div className="toggleButton"></div>
                 </div>
                 <div className="form-section-inner">
-
                     {this.formElements(this.state.formActive)}
-
-                    {this.methodsList(this.state.formActive)}
-
-
+                    {this.methodsList(this.state.formActive, this.state.methodParams)}
                     {this.formButton(this.state.formActive)}
-
-
                 </div>
             </div>
 

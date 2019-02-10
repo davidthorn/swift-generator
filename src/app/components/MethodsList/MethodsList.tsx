@@ -5,37 +5,58 @@ import { SubmitButton } from "../SubmitButton/SubmitButton";
 
 interface MethodsListProps {
     methods: MethodBlock[]
+    editButtonPressed: (method: MethodBlock) => void
+    deleteButtonPressed: (method: MethodBlock) => void
 }
 
-interface MethodsListState { }
+interface MethodsListState { 
+    methods: MethodBlock[]
+}
 
 export default class MethodsList extends Component<MethodsListProps, MethodsListState> {
 
     constructor(props: MethodsListProps, state: MethodsListState) {
         super(props, state)
         this.state = {
+            methods: props.methods
         }
+    }
+
+    deleteMethod(method: MethodBlock) {
+        console.log('')
+        const _save_methods = this.state.methods.filter(i => i.id !== method.id)
+        this.setState({
+            methods: _save_methods
+        }, () => {
+            this.props.deleteButtonPressed(method)
+        })
+    }
+
+    editMethod(method: MethodBlock) {
+        this.props.editButtonPressed(method)
     }
 
     render() {
 
-        let items = this.props.methods.map((i,index) => {
+        let items = this.state.methods.map((method,index) => {
             const mod = index % 2 === 0 ? 'row-light' : 'row-dark'
             const classes = `methods-list-table-row ${mod}`
             return (
-                <div key={i.id} className={classes}>
+                <div key={method.id} className={classes}>
                     <div className="col-name">
-                        { i.name }
+                        { method.name }
                     </div>
                     <div className="col-edit-button">
-                        <SubmitButton title="Edit" onPress={() => { }} />
+                        <SubmitButton title="Edit" onPress={() => { 
+                            this.editMethod(method)
+                        }} />
                     </div>
                     <div className="col-delete-button">
-                        <SubmitButton title="Delete" onPress={() => { }} />
+                        <SubmitButton title="Delete" onPress={() => { 
+                            this.deleteMethod(method)
+                        }} />
                     </div>
                 </div>
-
-
             )
         })
 

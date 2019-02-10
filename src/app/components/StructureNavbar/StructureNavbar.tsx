@@ -33,9 +33,6 @@ export class StructureNavbar extends Component<StructureNavbarProps,StructureNav
             <li onClick={() => this.props.navigate(Pages.information)}>
                 {PageNames.information}
             </li>
-            <li onClick={() => this.props.navigate(Pages.methods)}>
-                {PageNames.methods}
-            </li>
             <li onClick={() => this.props.navigate(Pages.properties)}>
                 {PageNames.properties}
             </li>

@@ -32,6 +32,8 @@ export class InformationFeature extends Component<InformationFeatureProps, Infor
     render() {
         return (
             <DataStructureForm
+                deleteButtonPressed={this.props.deleteButtonPressed}
+                editButtonPressed={this.props.editButtonPressed}
                 structure={this.props.structure}
                 onSubmit={this.props.onSubmit}
             ></DataStructureForm>

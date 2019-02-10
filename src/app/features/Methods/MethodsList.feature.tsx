@@ -184,7 +184,10 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
                 // </div>);
             case MethodsListFeatureViews.list:
                 return (<div className="methods-list-wrapper">
-                    <MethodsList methods={this.state.methods}></MethodsList>
+                    <MethodsList 
+                    editButtonPressed={this.props.editButtonPressed}
+                    deleteButtonPressed={this.props.deleteButtonPressed}
+                    methods={this.state.methods}></MethodsList>
                 </div>);
         }
     }

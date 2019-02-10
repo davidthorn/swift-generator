@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { DataStructure, RawDataStructure } from "../../resources/dataStructure";
 import DataStructureForm from "../DataStructureForm/DataStructureForm";
+import { MethodBlock } from '../../resources/methods'
 import './Form.css';
 
 /**
@@ -9,6 +10,8 @@ import './Form.css';
  * @interface FormComponentProps
  */
 interface FormComponentProps {
+    editButtonPressed: (method: MethodBlock) => void
+    deleteButtonPressed: (method: MethodBlock) => void
     structure: RawDataStructure
     onSubmit: (structure: DataStructure) => void
 } 
@@ -52,6 +55,8 @@ export class FormComponent extends Component<FormComponentProps, FormComponentSt
             
            <div className="form-group">
                 <DataStructureForm 
+                editButtonPressed={this.props.editButtonPressed}
+                deleteButtonPressed={this.props.deleteButtonPressed}
                 structure={this.props.structure}
                 onSubmit={this.props.onSubmit}
                 ></DataStructureForm>

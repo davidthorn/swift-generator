@@ -1,4 +1,5 @@
 import { DataStructure } from "../../resources/dataStructure";
+import { MethodBlock } from "../../resources/methods";
 
 /**
  *The Information features props
@@ -21,5 +22,8 @@ export interface InformationFeatureProps {
      *
      * @memberof InformationFeatureProps
      */
-    onSubmit: (structure: DataStructure) => void;
+    onSubmit: (structure: DataStructure, redirect: boolean) => void;
+
+    editButtonPressed: (method: MethodBlock) => void
+    deleteButtonPressed: (method: MethodBlock) => void
 }

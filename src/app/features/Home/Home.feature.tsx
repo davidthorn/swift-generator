@@ -32,7 +32,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         const storage = localStorage.getItem('structure')
         const structure = storage !== null ? JSON.parse(storage) : this.getDefaultStructure()
         this.state = {
-            page: storage === null ? Pages.information : Pages.methods,
+            page: storage === null ? Pages.information : Pages.overview,
             dataStructure: structure
         }
     }
@@ -72,6 +72,9 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         const struct = this.state.dataStructure
         struct.methods = methods
         this.updateState(struct)
+        this.forceUpdate(() => {
+            console.log('forced update')
+        })
     }
 
     /**
@@ -81,21 +84,38 @@ class HomeFeature extends Component<HomeProps, HomeState> {
      * @param {DataStructure} structure
      * @memberof HomeFeature
      */
-    protected updateState(structure: DataStructure) {
-
+    protected updateState(structure: DataStructure, page: Pages = Pages.overview) {
+        console.log('upadting state' , structure)
         this.setState((state) => {
             const s = state.dataStructure
             structure.methods = s.methods
             structure.properties = s.properties
             return {
                 ...state,
-                page: Pages.overview,
+                page: page,
                 dataStructure: structure
             }
         }, () => {
+            console.log('upadting local storage')
             localStorage.setItem('structure', JSON.stringify(this.state.dataStructure));
         })
 
+    }
+
+    deleteMethod(method: MethodBlock) {
+        const _save_methods = this.state.dataStructure.methods.filter(i => i.id !== method.id)
+        const struct = this.state.dataStructure
+        struct.methods = _save_methods
+        this.updateState(struct, this.state.page)
+    }
+
+    editMethod(method: MethodBlock) {
+        const _save_methods = this.state.dataStructure.methods.map(i => {
+            return i.id === method.id ? method : i
+        })
+        const struct = this.state.dataStructure
+        struct.methods = _save_methods
+        this.updateState(struct, this.state.page)
     }
 
     /**
@@ -105,7 +125,6 @@ class HomeFeature extends Component<HomeProps, HomeState> {
      * @memberof HomeFeature
      */
     render() {
-
         return (
             <div className="main-wrapper">
                 <div className="header"></div>
@@ -115,9 +134,8 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                             navigate={this.setPage.bind(this)}
                         />
                     </div>
-
                     <div className="main-body">
-                        {this.getPageElement(this.state.page)}
+                        {this.getPageElement(this.state.page, this.state.dataStructure)}
                     </div>
                 </div>
             </div>
@@ -131,9 +149,11 @@ class HomeFeature extends Component<HomeProps, HomeState> {
      * @returns {JSX.Element}
      * @memberof HomeFeature
      */
-    protected getMethodsListFeature(): JSX.Element {
+    protected getMethodsListFeature(methods: MethodBlock[]): JSX.Element {
         return (
             <MethodsListFeature
+                deleteButtonPressed={this.deleteMethod.bind(this)}
+                editButtonPressed={this.editMethod.bind(this)}
                 view={MethodsListFeatureViews.list}
                 addButtonPressed={(completion) => {
                     completion()
@@ -142,7 +162,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                     completion()
                 }}
                 updated={this.updateStructure.bind(this)}
-                methods={this.state.dataStructure.methods}
+                methods={methods}
             />
         );
     }
@@ -157,8 +177,19 @@ class HomeFeature extends Component<HomeProps, HomeState> {
     protected getInformationFeature(): JSX.Element {
         return (
             <InformationFeature
+                deleteButtonPressed={this.deleteMethod.bind(this)}
+                editButtonPressed={this.editMethod.bind(this)}
                 structure={this.state.dataStructure}
-                onSubmit={this.updateState.bind(this)} />
+                onSubmit={(structure, redirect) => {
+                    switch(redirect) {
+                        case true:
+                            this.updateState(structure)
+                        break
+                        case false:
+                            this.updateState(structure, this.state.page)
+                        break
+                    }
+                }} />
         );
     }
 
@@ -177,14 +208,14 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         );
     }
 
-    protected getPageElement(page: Pages): JSX.Element {
+    protected getPageElement(page: Pages, structure: DataStructure): JSX.Element {
         switch (page) {
             case Pages.overview:
                 return this.getOverviewFeature()
             case Pages.information:
                 return this.getInformationFeature()
-            case Pages.methods:
-                return this.getMethodsListFeature()
+            // case Pages.methods:
+            //     return this.getMethodsListFeature(structure.methods)
             case Pages.properties:
                 return (<div>Properties</div>);
         }
