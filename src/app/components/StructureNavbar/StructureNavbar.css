@@ -1,0 +1,31 @@
+.structure-navbar {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 0px;
+    
+}
+
+.structure-navbar li {
+    height: 50px;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: 1px solid #55555590;
+}
+
+.structure-navbar li span {
+    text-indent: 20px;
+    font-size: 1em;
+}
+
+.structure-navbar li:hover {
+    background: #a1a1a150;
+    cursor: pointer;
+}

@@ -19,12 +19,12 @@
 }
 
 .leftnavbar {
-    flex: 0.3;
+    flex: 0.30;
     max-width: 280px;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    padding-top: 70px;
+    padding-top: 30px;
 
 }
 

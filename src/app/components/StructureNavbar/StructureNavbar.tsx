@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { PageNames } from "../../features/Home/PageNames";
 import { Pages } from "../../features/Home/Pages";
+import './StructureNavbar.css'
 
 interface StructureNavbarProps {
     navigate: (page: Pages) => void
@@ -26,15 +27,17 @@ export class StructureNavbar extends Component<StructureNavbarProps,StructureNav
 
     render() {
         return (
-            <ul>
+            <ul className="structure-navbar">
             <li onClick={() => this.props.navigate(Pages.overview)}>
-                {PageNames.overview}
+                <span>
+                    {PageNames.overview}
+                </span>
+                
             </li>
             <li onClick={() => this.props.navigate(Pages.information)}>
-                {PageNames.information}
-            </li>
-            <li onClick={() => this.props.navigate(Pages.properties)}>
-                {PageNames.properties}
+                <span>
+                    {PageNames.information}
+                </span>
             </li>
         </ul>
         )
