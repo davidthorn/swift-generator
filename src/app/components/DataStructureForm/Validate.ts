@@ -43,7 +43,7 @@ const DataStructureSchema = Joi.object({
     implements: Joi.array().items(implementsValidation).min(0).required().label('Implements').error(() => {
         return "Implementations has invalid content"
     }),
-    extends: Joi.string().regex(/^[\w\d]+$/).optional().label('Extends').error((d) => {
+    extends: Joi.string().regex(/^[\w\d]+$/).optional().allow('').label('Extends').error((d) => {
         return d.map(l => {
             switch(l.type) {
                 case 'any.required': 

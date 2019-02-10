@@ -10,6 +10,37 @@ import { SelectOption } from "../select-option/SelectOption";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { DataStructureValidate } from "./Validate";
 
+enum DataStructureFormFields {
+    name = 'name' ,
+    accessLevel = 'accessLevel',
+    extends = 'extends',
+    implements = 'implements',
+    methods = 'methods',
+    properties = 'properties',
+    type= 'type'
+}
+
+enum DataStructureFieldLabels {
+    name = 'Name' ,
+    accessLevel = 'Access Level',
+    extends = 'Extends',
+    implements = 'Implements (comma separated)',
+    methods = 'Methods',
+    properties = 'Properties',
+    type= 'Type',
+    submit = 'Submit'
+}
+
+enum DataStructureFieldPlaceholder {
+    name = 'Enter a structure name' ,
+    accessLevel = 'Choose an access level',
+    extends = 'Enter an Extendable structure name',
+    implements = 'Enters a comma separated list of data structures',
+    type= 'Choose a type'
+}
+
+type  DataStructureFormAllowedFieldValues = undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]
+
 interface DataStructureFormProps {
     structure: RawDataStructure
     onSubmit: (structure: DataStructure) => void
@@ -70,13 +101,42 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
 
     }
 
-    valueChanged(key: 'name' | 'accessLevel' | 'extends' | 'implements' | 'methods' | 'properties' | 'type', value?: undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]) {
+    /**
+     * Called everytime a fields value in the form has changed
+     * This method is responsible for the updating of the states structure property
+     *
+     * @param {DataStructureFormFields} key
+     * @param {DataStructureFormAllowedFieldValues} [value]
+     * @memberof DataStructureForm
+     */
+    valueChanged(key:  DataStructureFormFields , value?: DataStructureFormAllowedFieldValues) {
         this.setState((state) => {
-            state.structure[key] = value
+            switch(key) {
+                case DataStructureFormFields.type:
+                    state.structure[key] = (value as string).split('_')[1] as DataStructureType
+                break
+                case DataStructureFormFields.accessLevel:
+                    state.structure[key] = (value as string).split('_')[1] as AccessLevel
+                break;
+                case DataStructureFormFields.extends:
+                    const extends_value = (value as string).trim()
+                    state.structure[key] = extends_value.length > 0 ? extends_value : undefined 
+                    break
+                default:
+                    state.structure[key] = value
+            }
+            
             return state
         })
     }
 
+    /**
+     * Retrieves the errors if any are present for this fields key
+     *
+     * @param {string} key
+     * @returns {string[]}
+     * @memberof DataStructureForm
+     */
     errors(key: string): string[] {
         if (this.state.errors[key] === undefined) return []
         const _errors = this.state.errors[key]
@@ -85,6 +145,12 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         })
     }
 
+    /**
+     * 
+     *
+     * @returns
+     * @memberof DataStructureForm
+     */
     render() {
 
         const data = this.state.structure
@@ -99,51 +165,53 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     <InputField
                         errors={this.errors('name')}
                         key="name"
-                        onChange={(v) => this.valueChanged('name', v)}
-                        label="Name"
+                        onChange={(v) => this.valueChanged(DataStructureFormFields.name, v)}
+                        label={DataStructureFieldLabels.name}
                         value= {data.name || ''}
-                        placeholder="Enter the data structure name"
+                        placeholder={DataStructureFieldPlaceholder.name}
                         type="text" />
 
                     <SelectOption
                         key="type"
                         options={dataStructureTypesOptions}
                         id=""
+                        onChange={(v) => this.valueChanged(DataStructureFormFields.type, v)}
                         defaultOption=""
-                        label="Type"
+                        label={DataStructureFieldLabels.type}
                         name=""
                     />
 
                     <SelectOption
                         options={accessLevelTypesOptions}
                         id=""
+                        onChange={(v) => this.valueChanged(DataStructureFormFields.accessLevel, v)}
                         defaultOption=""
-                        key="access_level"
-                        label="Access Control"
+                        key="accessLevel"
+                        label={DataStructureFieldLabels.accessLevel}
                         name=""
                     />
 
                     <InputField
                         errors={this.errors('extends')}
-                        onChange={(v) => this.valueChanged('extends', v)}
-                        label="Extends"
+                        onChange={(v) => this.valueChanged(DataStructureFormFields.extends, v)}
+                        label={DataStructureFieldLabels.extends}
                         value= {data.extends || ''}
                         key="extends"
-                        placeholder="Extending"
+                        placeholder={DataStructureFieldPlaceholder.extends}
                         type="text" />
 
                     <InputField
                         errors={this.errors('implements')}
-                        onChange={(v) => this.valueChanged('implements', v.split(',').map(m => m.trim()))}
-                        label="Implements (comma separated)"
+                        onChange={(v) => this.valueChanged(DataStructureFormFields.implements, v.split(',').map(m => m.trim()))}
+                        label={DataStructureFieldLabels.implements}
                         value= {data.implements.join(',')}
                         key="implements"
-                        placeholder="MyProtocol, OtherProtocol"
+                        placeholder={DataStructureFieldPlaceholder.implements}
                         type="text" />
 
                     <SubmitButton
                         key="submit_button"
-                        title="Submit"
+                        title={DataStructureFieldLabels.submit}
                         onPress={() => {
                             this.validate()
                         }}

@@ -6,14 +6,3 @@ export interface FieldError {
     joiError: ValidationErrorItem
     type: string
 }
-
-// declare module 'joi'  {
-
-//     // interface Joi {
-//     //     validate(obj: any): { [key:string]:  FieldError }
-//     // }
-
-// }
-
-
-

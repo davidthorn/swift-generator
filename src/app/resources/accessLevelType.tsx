@@ -1,5 +1,3 @@
-
-
 enum AccessLevel {
     internal = "internal",
     public = "public",
@@ -12,7 +10,7 @@ const accessLevelTypes: string[] = Object.values(AccessLevel)
 
 const accessLevelTypesOptions: { id: string, name: string }[] = accessLevelTypes.map(i => {
     return {
-        id: `access_level_${i}`,
+        id: `accessLevel_${i}`,
         name: i
     }
 })

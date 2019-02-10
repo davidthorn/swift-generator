@@ -1,13 +1,9 @@
 import React, { Component } from "react"
 import './GeneratorType.css'
 
-interface GeneratorTypeProps {
+interface GeneratorTypeProps {}
 
-}
-
-interface GeneratorTypeState {
-
-}
+interface GeneratorTypeState { }
 
 export default class GeneratorType extends Component<GeneratorTypeProps,GeneratorTypeState> {
 

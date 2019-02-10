@@ -1,5 +1,3 @@
-
-
 enum DataStructureType {
     class = "class",
     struct = "struct",

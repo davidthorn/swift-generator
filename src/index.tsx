@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { HomeFeature } from './app/features/Home.feature';
+import { HomeFeature } from './app/features/Home/Home.feature';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<HomeFeature />, document.getElementById('root'));
