@@ -32,7 +32,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
         const storage = localStorage.getItem('structure')
         const structure = storage !== null ? JSON.parse(storage) : this.getDefaultStructure()
         this.state = {
-            page: storage === null ? Pages.information : Pages.overview,
+            page: storage === null ? Pages.information : Pages.methods,
             dataStructure: structure
         }
     }

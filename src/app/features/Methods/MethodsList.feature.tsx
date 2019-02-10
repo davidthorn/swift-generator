@@ -184,11 +184,6 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
                 // </div>);
             case MethodsListFeatureViews.list:
                 return (<div className="methods-list-wrapper">
-                    <div className="methods-list-navbar">
-                        <div className="add-method-button" onClick={() => {
-                            this.navigate(MethodsListFeatureViews.form);
-                        }}>Add</div>
-                    </div>
                     <MethodsList methods={this.state.methods}></MethodsList>
                 </div>);
         }

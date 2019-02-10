@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { MethodsListFeature } from "../../features/Methods/MethodsList.feature";
+import { MethodsListFeatureViews } from "../../features/Methods/MethodsListFeatureViews";
 import { AccessLevel, accessLevelTypesOptions } from "../../resources/accessLevelType";
 import { DataStructure, RawDataStructure } from "../../resources/dataStructure";
 import { DataStructureType, dataStructureTypesOptions } from "../../resources/dataStructureType";
@@ -9,9 +11,7 @@ import InputField from "../InputField/InputField.component";
 import { SelectOption } from "../select-option/SelectOption";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { DataStructureValidate } from "./Validate";
-import MethodsList from "../MethodsList/MethodsList";
-import { MethodsListFeature } from "../../features/Methods/MethodsList.feature";
-import { MethodsListFeatureViews } from "../../features/Methods/MethodsListFeatureViews";
+import '../Form/Form.css'
 
 enum DataStructureFormFields {
     name = 'name',
@@ -270,7 +270,9 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         return (
             <div className="form-section">
                 <div className="form-section-navbar">
-                    <h1 className="form-section-header">Data Structure Form</h1>
+                    <div className="form-section-header">
+                        <span>Data Structure Form</span>
+                    </div>
                     <div className="toggleButton"></div>
                 </div>
                 <div className="form-section-inner">

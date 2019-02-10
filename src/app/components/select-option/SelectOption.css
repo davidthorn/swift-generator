@@ -6,25 +6,22 @@
     flex-direction: column;
 }
 label {
-    font-size: 1.3em;
+    font-size: 0.9em;
     color: #111;
     margin-bottom: 3px;
     display: block;
 }
 
 select{
-   
-    border: 1px solid red;
+    border: 1px solid #a1a1a180;
     height: 35px;
     text-indent: 8px;
-
+    outline: none;
 }
 
 .option-list option {
-   
-    border: 1px solid red;
+    border: 1px solid #a1a1a180;
     height: 35px;
-    color: green;
     text-indent: 8px;
     padding: 10px 0 10px 0;
     font-size: 1.1em;

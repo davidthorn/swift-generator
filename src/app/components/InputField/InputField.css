@@ -6,18 +6,17 @@
     flex-direction: column;
 }
 label {
-    font-size: 1.3em;
+    font-size: 0.9em;
     color: #111;
     margin-bottom: 3px;
     display: block;
 }
 
 input{
-   
-    border: 1px solid red;
+    border: 1px solid #a1a1a180;
     height: 35px;
     text-indent: 8px;
-
+    outline: none;
 }
 
 .error-holder {
