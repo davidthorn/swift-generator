@@ -135,7 +135,7 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
         }
     }
 
-    protected updateMethods(method: MethodBlock ) {
+    protected updateMethods(method: MethodBlock , redirect: boolean ) {
     
         let methods = this.state.methods
 
@@ -153,7 +153,7 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
                 methods: methods
             }
         }, () => {
-            this.props.updated(this.state.methods)
+            this.props.updated(this.state.methods , redirect)
         })
 
     }
@@ -172,7 +172,9 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
             return (
                 <MethodBlockForm
                 method={this.state.formParams}
-                onSubmit={this.updateMethods.bind(this)}
+                onSubmit={(method, redirect) => {
+                    this.updateMethods(method, redirect)
+                }}
                 />
                 )
                 // return (<div>

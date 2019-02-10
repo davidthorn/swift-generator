@@ -1,7 +1,9 @@
 import { AccessLevel } from "./accessLevelType";
 
 export interface Params {
-    
+
+    id: string
+
     /**
      * swifts argumentLabel
      * ref: https://docs.swift.org/swift-book/LanguageGuide/Functions.html
@@ -9,7 +11,7 @@ export interface Params {
      * @type {string}
      * @memberof Params
      */
-    name?: string 
+    name?: string
 
     /**
      * swifts parameterName
@@ -28,7 +30,15 @@ export interface Params {
      * @memberof Params
      */
     value: string
-    optional: boolean 
+    optional: boolean
+}
+
+export interface RawParams {
+    id?: string
+    name?: string
+    label?: string
+    value?: string
+    optional?: boolean
 }
 
 export interface MethodBlock {

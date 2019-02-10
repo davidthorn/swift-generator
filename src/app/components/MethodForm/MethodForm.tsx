@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AccessLevel, accessLevelTypesOptions } from "../../resources/accessLevelType";
-import { MethodBlock, RawMethodBlock, Params } from "../../resources/methods";
+import { MethodBlock, RawMethodBlock, Params, RawParams } from "../../resources/methods";
 import { MethodProperty } from "../../resources/MethodProperty";
 import { FieldError } from "../Form";
 import InputField from "../InputField/InputField.component";
@@ -8,6 +8,9 @@ import { SelectOption } from "../select-option/SelectOption";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { MethodBlockValidate } from "./Validate";
 import uuid from 'uuid'
+import { ParamsForm } from "../ParamsForm/ParamsForm";
+import { ParamsListFeature } from "../../features/Params/ParamsList.feature";
+import { ParamsListFeatureViews } from "../../features/Params/ParamsListFeatureViews";
 
 enum MethodBlockFormFields {
     name = 'name',
@@ -38,12 +41,14 @@ type MethodBlockFormAllowedFieldValues = undefined | string | AccessLevel | bool
 
 interface MethodBlockFormProps {
     method: RawMethodBlock
-    onSubmit: (method: MethodBlock) => void
+    onSubmit: (method: MethodBlock, redirect: boolean) => void
 }
 
 interface MethodBlockFormState {
     method: RawMethodBlock
     errors: { [key: string]: FieldError[] }
+    paramsFormActive: boolean
+    paramsData?: RawParams
 }
 
 
@@ -60,7 +65,10 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
         super(props, state)
         this.state = {
             method: props.method,
-            errors: {}
+            errors: {},
+            paramsFormActive: false,
+            paramsData: undefined
+
         }
 
     }
@@ -74,7 +82,7 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
                 value.id = uuid.v4()
             }
             console.log('no errors')
-            this.props.onSubmit(value as MethodBlock)
+            this.props.onSubmit(value as MethodBlock , false)
         } else {
             console.log('no errors', error)
             let newErrors: { [key: string]: FieldError[] } = {}
@@ -115,7 +123,7 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
      * @memberof MethodBlockForm
      */
     valueChanged(key: MethodBlockFormFields, value?: MethodBlockFormAllowedFieldValues) {
-        console.log('value' , {
+        console.log('value', {
             key: key,
             value
         })
@@ -154,6 +162,164 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
         })
     }
 
+    protected paramsList(methodFormActive: boolean, paramsData?: RawParams): JSX.Element {
+
+        if (paramsData !== undefined) {
+            return (
+                <ParamsForm
+                    params={paramsData}
+                    onSubmit={(updatedParams) => {
+                        this.setState((state) => {
+                            const method = state.method
+                            method.params = method.params.map(i => i.id === updatedParams.id ? updatedParams : i)
+                            return {
+                                ...state,
+                                method: method,
+                                propertyParams: undefined,
+                                propertyFormActive: false
+                            }
+                        }, () => {
+                            this.props.onSubmit(this.state.method as MethodBlock , false)
+                        })
+                    }}
+                />
+            )
+        }
+
+        return (
+
+            <ParamsListFeature
+                deleteButtonPressed={(params) => {
+                    const method = this.state.method
+                    const new_params = method.params.filter(i => { return i.id !== params.id })
+                    method.params = new_params
+                    this.setState((state) => {
+                       
+                        return {
+                            ...state,
+                            paramsFormActive: false,
+                            paramsData: undefined,
+                            method: method
+                        }
+                    }, () => {
+                        this.props.onSubmit(this.state.method as MethodBlock, false)
+                    })
+                }}
+                editButtonPressed={(params) => {
+                    console.log('edit button pressed')
+                    this.setState((state) => {
+                        return {
+                            ...state,
+                            paramsData: params as RawParams,
+                            paramsFormActive: true,
+                        }
+                    })
+                }}
+                view={methodFormActive === true ? ParamsListFeatureViews.form : ParamsListFeatureViews.list}
+                backButtonPressed={() => {
+                    this.setState(() => {
+                        return {
+                            paramsFormActive: false
+                        }
+                    })
+                }}
+                addButtonPressed={(completion) => {
+                    console.log('add button pressed')
+                    this.setState((state) => {
+                        return {
+                            ...state,
+                            paramsFormActive: true,
+                            paramsData: {}
+                        }
+                    }, completion)
+
+                }}
+                params={this.state.method.params}
+                updated={(updatedParams) => {
+                    this.setState((state) => {
+                        console.log('updated state in method form for params' , state)
+                        state.method.params = updatedParams
+                        return {
+                            ...state,
+                            paramsFormActive: false,
+                            paramsData: undefined,
+                            method: state.method
+                        }
+                    }, () => {
+                        this.props.onSubmit(this.state.method as MethodBlock, true)
+                    })
+                }}
+            />
+        )
+    }
+
+
+    protected getFields(paramsFormActive: boolean): JSX.Element | undefined {
+
+        if (paramsFormActive) return undefined
+        const data = this.state.method
+        return (
+            <React.Fragment>
+                <InputField
+                    errors={this.errors('name')}
+                    key="name"
+                    onChange={(v) => this.valueChanged(MethodBlockFormFields.name, v)}
+                    label={MethodBlockFieldLabels.name}
+                    value={data.name || ''}
+                    placeholder={MethodBlockFieldPlaceholder.name}
+                    type="text" />
+
+                <SelectOption
+                    options={accessLevelTypesOptions}
+                    id=""
+                    onChange={(v) => this.valueChanged(MethodBlockFormFields.accessLevel, v)}
+                    defaultOption=""
+                    key="accessLevel"
+                    label={MethodBlockFieldLabels.accessLevel}
+                    name="accessLevel"
+                />
+
+                <SelectOption
+                    options={[
+                        { id: 'overrides_yes', name: 'Yes' },
+                        { id: 'overrides_no', name: 'No' }
+                    ]}
+                    id=""
+                    onChange={(v) => this.valueChanged(MethodBlockFormFields.overrides, v)}
+                    defaultOption=""
+                    key="overrides"
+                    label={MethodBlockFieldLabels.overrides}
+                    name=""
+                />
+
+
+                <InputField
+                    errors={this.errors('returnType')}
+                    key="returnType"
+                    onChange={(v) => this.valueChanged(MethodBlockFormFields.returnType, v)}
+                    label={MethodBlockFieldLabels.returnType}
+                    value={data.returnType || 'Void'}
+                    placeholder={MethodBlockFieldPlaceholder.returnType}
+                    type="text" />
+            </React.Fragment>
+
+
+        )
+    }
+
+    protected getButton(paramsFormActive: boolean): JSX.Element | undefined {
+        if (paramsFormActive) return undefined
+        return (
+            <SubmitButton
+                        key="submit_button"
+                        title={MethodBlockFieldLabels.submit}
+                        onPress={() => {
+                            this.validate()
+                        }}
+                    />
+        )
+    }
+
     /**
      * 
      *
@@ -171,58 +337,9 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
                     <div className="toggleButton"></div>
                 </div>
                 <div className="form-section-inner">
-                    <InputField
-                        errors={this.errors('name')}
-                        key="name"
-                        onChange={(v) => this.valueChanged(MethodBlockFormFields.name, v)}
-                        label={MethodBlockFieldLabels.name}
-                        value={data.name || ''}
-                        placeholder={MethodBlockFieldPlaceholder.name}
-                        type="text" />
-
-                    <SelectOption
-                        options={accessLevelTypesOptions}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodBlockFormFields.accessLevel, v)}
-                        defaultOption=""
-                        key="accessLevel"
-                        label={MethodBlockFieldLabels.accessLevel}
-                        name="accessLevel"
-                    />
-
-                    <SelectOption
-                        options={[
-                            { id: 'overrides_yes', name: 'Yes' },
-                            { id: 'overrides_no', name: 'No' }
-                        ]}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodBlockFormFields.overrides, v)}
-                        defaultOption=""
-                        key="overrides"
-                        label={MethodBlockFieldLabels.overrides}
-                        name=""
-                    />
-
-
-                    <InputField
-                        errors={this.errors('returnType')}
-                        key="returnType"
-                        onChange={(v) => this.valueChanged(MethodBlockFormFields.returnType, v)}
-                        label={MethodBlockFieldLabels.returnType}
-                        value={data.returnType || 'Void'}
-                        placeholder={MethodBlockFieldPlaceholder.returnType}
-                        type="text" />
-
-                    <SubmitButton
-                        key="submit_button"
-                        title={MethodBlockFieldLabels.submit}
-                        onPress={() => {
-                            this.validate()
-                        }}
-                    >
-
-                    </SubmitButton>
-
+                    { this.getFields(this.state.paramsFormActive) }
+                    {this.paramsList(this.state.paramsFormActive, this.state.paramsData)}
+                    { this.getButton(this.state.paramsFormActive) }
                 </div>
             </div>
 

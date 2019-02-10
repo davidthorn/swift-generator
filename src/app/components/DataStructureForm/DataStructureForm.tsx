@@ -238,7 +238,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
             return (
                 <MethodBlockForm
                 method={method}
-                onSubmit={(updatedMethod) => {
+                onSubmit={(updatedMethod, redirect) => {
                     this.setState((state) => {
                         const struct =  state.structure
                         struct.methods = struct.methods.map(i => i.id === updatedMethod.id ? updatedMethod : i)
@@ -295,7 +295,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                             structure: state.structure
                         }
                     }, () => {
-                        this.props.onSubmit(this.state.structure as DataStructure , false)
+                        this.props.onSubmit(this.state.structure as DataStructure , true)
                     })
                 }}
             />
@@ -310,6 +310,8 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                 property={property}
                 onSubmit={(updatedProperty) => {
                     this.setState((state) => {
+                      
+                        console.log('added new property', updatedProperty)
                         const struct =  state.structure
                         struct.properties = struct.properties.map(i => i.id === updatedProperty.id ? updatedProperty : i)
                         return {
