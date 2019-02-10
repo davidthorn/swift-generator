@@ -1,22 +1,12 @@
-import React, { Component } from "react"
-import './Form.css'
-import InputField from "../InputField/InputField.component";
-import { SelectOption } from "../select-option/SelectOption";
-import { dataStructureTypes, dataStructureTypesOptions, DataStructureType } from "../../resources/dataStructureType";
-import { accessLevelTypes, accessLevelTypesOptions, AccessLevel } from "../../resources/accessLevelType";
+import React, { Component } from "react";
+import { DataStructure, RawDataStructure } from "../../resources/dataStructure";
 import DataStructureForm from "../DataStructureForm/DataStructureForm";
-
-interface DataStructure {
-    name: string
-    extends?: string
-    implements?: string[]
-    accessControl:AccessLevel
-    type: DataStructureType
-}
+import './Form.css';
 
 interface FormComponentProps {
-
-}
+    structure: RawDataStructure
+    onSubmit: (structure: DataStructure) => void
+} 
 
 
 interface FormComponentState {
@@ -35,7 +25,10 @@ export default class FormComponent extends Component<FormComponentProps, FormCom
         return (
             
            <div className="form-group">
-                <DataStructureForm></DataStructureForm>
+                <DataStructureForm 
+                structure={this.props.structure}
+                onSubmit={this.props.onSubmit}
+                ></DataStructureForm>
            </div>
         )
     }

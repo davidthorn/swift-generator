@@ -19,3 +19,24 @@ input{
     text-indent: 8px;
 
 }
+
+.error-holder {
+    height: auto;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.error-holder  ul {
+    margin: 0px;
+    padding: 0px;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.error-holder  ul li {
+    color: red;
+    font-size: 0.8em;
+    text-indent: 2px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}

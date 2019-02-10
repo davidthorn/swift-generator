@@ -12,7 +12,7 @@ const accessLevelTypes: string[] = Object.values(AccessLevel)
 
 const accessLevelTypesOptions: { id: string, name: string }[] = accessLevelTypes.map(i => {
     return {
-        id: i,
+        id: `access_level_${i}`,
         name: i
     }
 })

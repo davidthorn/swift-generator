@@ -9,6 +9,7 @@ interface InputFieldProps {
     type: 'text' | 'email' | 'password' | 'email'
     placeholder?: string
     onChange?: (value: string) => void
+    errors?:string[] 
 }
 
 interface InputFieldState {
@@ -33,8 +34,26 @@ export default class InputField extends Component<InputFieldProps,InputFieldStat
     }
 
     render() {
+
+        const errorsHolder = (errors?: string[]) => {
+            if(errors === undefined) return
+            if(errors.length === 0) return
+            return (
+                <span className="error-holder">
+                <ul>
+                    { 
+                    errors.map(i => (
+                        <li>{i}</li>
+                    )) 
+                    }
+                </ul>
+             </span>
+            )
+        }
+
         return (
             <div className="field-group">
+                { errorsHolder(this.props.errors) } 
              <label>{ this.props.label }</label>
              <input type="text"
              id={this.props.id || ''}

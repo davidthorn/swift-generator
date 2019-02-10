@@ -1,0 +1,15 @@
+.methods-list-view {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.methods-list-view-body {
+    margin: 30px;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}

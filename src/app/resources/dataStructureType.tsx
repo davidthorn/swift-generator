@@ -15,7 +15,7 @@ const dataStructureTypes: string[] = keys.map((i) => {
 
 const dataStructureTypesOptions: { id: string, name: string }[] = dataStructureTypes.map(i => {
     return {
-        id: i,
+        id: `type_${i}`,
         name: i
     }
 })

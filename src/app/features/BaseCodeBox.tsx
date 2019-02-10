@@ -1,19 +1,6 @@
 import React, { Component } from "react"
 import { Params, MethodBlock } from '../resources/methods'
-
-interface MethodProperty {
-    arc?: 'unowned' | 'weak'
-    access: 'public' | 'private' | 'internal' | 'fileprivate' 
-    overrides?: boolean
-    name: string
-    type: string
-    optional?: boolean
-    lazy?: boolean
-    defaultValue?: string
-    readOnly?: boolean
-}
-
-
+import { MethodProperty } from "../resources/MethodProperty";
 
 interface CodeBoxProps {
     access: 'public' | 'private' | 'internal' | 'fileprivate' | undefined

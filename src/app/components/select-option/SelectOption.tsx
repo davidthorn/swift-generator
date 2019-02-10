@@ -42,7 +42,7 @@ class SelectOption extends Component<SelectOptionProps,SelectOptionState> {
 
         const items = this.props.options.map(i => {
             return (
-                <option value={i.id}>{i.name}</option>
+                <option key={i.id} value={i.id}>{i.name}</option>
             )
         })
 

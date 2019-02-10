@@ -1,6 +1,5 @@
 #root {
   flex: 1;
-  background-color: 'red';
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
