@@ -29,7 +29,10 @@ export interface Params {
      * @type {string}
      * @memberof Params
      */
-    value: string
+    type: string
+
+    defaultValue?: string
+    
     optional: boolean
 }
 
@@ -37,8 +40,9 @@ export interface RawParams {
     id?: string
     name?: string
     label?: string
-    value?: string
+    type?: string
     optional?: boolean
+    defaultValue?: string
 }
 
 export interface MethodBlock {

@@ -17,11 +17,11 @@ enum MethodPropertySchemaErrorMessages {
 
 const MethodPropertySchema = Joi.object({
     id: Joi.string().optional(),
-    arc: Joi.string().allow(['unowned' , 'weak' , 'none']).required().label('ARC'),
+    arc: Joi.string().allow(['unowned' , 'weak' , 'none']).default('none').required().label('ARC'),
     access: Joi.string().allow(accessLevelTypes).required().label('Access Level').default('internal').error(() => {
         return MethodPropertySchemaErrorMessages.access
     }),
-    overrides: Joi.string().optional().default('no'),
+    overrides: Joi.boolean().optional().default(false),
     name: Joi.string().regex(/^[\w\d]+$/).required().label('Name').error((d) => {
         return d.map(l => {
             switch(l.type) {
@@ -56,8 +56,8 @@ const MethodPropertySchema = Joi.object({
             return l
         })
     }),
-    optional: Joi.string().allow(['yes' , 'no']).optional().default('no').label('Optional'),
-    lazy: Joi.string().allow(['yes' , 'no']).optional().default('no').label('Lazy'),
+    optional: Joi.boolean().optional().default(false).label('Optional'),
+    lazy: Joi.boolean().optional().default(false).label('Lazy'),
     readOnly: Joi.boolean().optional().default(false).label('Ready Only'),
     defaultValue: Joi.string().regex(/^[\w\d ]+$/).optional().label('Default Value').error((d) => {
         return d.map(l => {

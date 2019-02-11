@@ -14,6 +14,8 @@ import { Pages } from "./Pages";
 import { MethodsListFeatureViews } from "../Methods/MethodsListFeatureViews";
 import { MethodPropertyForm } from "../../components/PropertyForm/PropertyForm";
 import { MethodProperty } from "../../resources/MethodProperty";
+import RadioButton from "../../components/RadioButton/RadioButton";
+import uuid from 'uuid';
 
 /**
  *
@@ -236,7 +238,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                         access: AccessLevel.fileprivate,
                     }}
                     onSubmit={() => {
-                        console.log('form submitted')
+                        
                     }}
                     />
                 );
@@ -258,6 +260,8 @@ class HomeFeature extends Component<HomeProps, HomeState> {
                         <StructureNavbar
                             navigate={this.setPage.bind(this)}
                         />
+                        
+                       
                     </div>
                     <div className="main-body">
                         {this.getPageElement(this.state.page, this.state.dataStructure)}

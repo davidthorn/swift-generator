@@ -147,9 +147,9 @@ export class MethodsListFeature extends Component<MethodsListFeatureProps, Metho
 
         this.setState((state) => {
             return {
-                prevView: state.prevView.splice(0, state.prevView.length - 1),
-                view: MethodsListFeatureViews.list,
-                formParams: undefined,
+                prevView: redirect ? state.prevView.splice(0, state.prevView.length - 1) : state.prevView,
+                view: redirect ? MethodsListFeatureViews.list : state.view,
+                formParams: redirect ? undefined : method,
                 methods: methods
             }
         }, () => {

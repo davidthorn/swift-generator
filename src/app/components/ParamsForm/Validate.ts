@@ -51,7 +51,24 @@ const ParamsSchema = Joi.object({
             return l
         })
     }),
-    value: Joi.string().regex(/^[\w\d]+$/).required().label('Value').error((d) => {
+    type: Joi.string().regex(/^[\w\d]+$/).required().label('Type').error((d) => {
+        return d.map(l => {
+            switch(l.type) {
+                case ParamsSchemaErrorTypes.require: 
+                l.message = ParamsSchemaErrorMessages.require
+                break
+                case ParamsSchemaErrorTypes.empty: 
+                l.message = ParamsSchemaErrorMessages.empty
+                break
+                case ParamsSchemaErrorTypes.expression:
+                l.message = ParamsSchemaErrorMessages.expression
+                break;
+                default: break;
+            }
+            return l
+        })
+    }),
+    defaultValue: Joi.string().optional().label('Default Value').error((d) => {
         return d.map(l => {
             switch(l.type) {
                 case ParamsSchemaErrorTypes.require: 

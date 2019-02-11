@@ -1,33 +1,35 @@
 import React, { Component } from "react";
-import { AccessLevel, accessLevelTypesOptions } from "../../resources/accessLevelType";
+import uuid from 'uuid';
 import { Params, RawParams } from "../../resources/methods";
 import { FieldError } from "../Form";
 import InputField from "../InputField/InputField.component";
-import { SelectOption } from "../select-option/SelectOption";
+import RadioButton from "../RadioButton/RadioButton";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { ParamsValidate } from "./Validate";
-import uuid from 'uuid'
 
 enum ParamsFormFields {
     name = "name",
-    value = "value",
+    type = "type",
     label = "label",
     optional = "optional",
+    defaultValue = "defaultValue"
 }
 
 enum ParamsFormFieldLabels {
-    name = "name",
-    value = "value",
-    label = "label",
-    optional = "optional",
-    submit = "submit"
+    name = "Name",
+    type = "Type",
+    label = "Label",
+    optional = "is Optional",
+    submit = "Submit",
+    defaultValue = "Default Value"
 }
 
 enum ParamsFormFieldPlacehodlers {
-    name = "name",
-    value = "value",
-    label = "label",
-    optional = "optional",
+    name = "The name of the parameter",
+    type = "The type of the parameter",
+    label = "The label for the parameter",
+    optional = "is Optional",
+    defaultValue = "Default Value"
 }
 
 type ParamsFormAllowedFieldValues = undefined | string | boolean
@@ -69,7 +71,6 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
             if (value.id === undefined) {
                 value.id = uuid.v4()
             }
-
             this.props.onSubmit(value as Params)
         } else {
             let newErrors: { [key: string]: FieldError[] } = {}
@@ -139,6 +140,10 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
         })
     }
 
+    getOverrides(value: boolean | undefined, equals: boolean): boolean {
+        return value === undefined ? false === equals : value === equals
+    }
+
     /**
      * 
      *
@@ -152,7 +157,7 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
         return (
             <div className="form-section">
                 <div className="form-section-navbar">
-                    <h1 className="form-section-header">Property Form</h1>
+                    <h1 className="form-section-header">Method Parameters Form</h1>
                     <div className="toggleButton"></div>
                 </div>
                 <div className="form-section-inner">
@@ -177,25 +182,32 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
                         type="text" />
 
                     <InputField
-                        errors={this.errors('value')}
-                        key="value"
-                        onChange={(v) => this.valueChanged(ParamsFormFields.value, v)}
-                        label={ParamsFormFieldLabels.value}
-                        value={data.value || ''}
-                        placeholder={ParamsFormFieldPlacehodlers.value}
+                        errors={this.errors('type')}
+                        key="type"
+                        onChange={(v) => this.valueChanged(ParamsFormFields.type, v)}
+                        label={ParamsFormFieldLabels.type}
+                        value={data.type || ''}
+                        placeholder={ParamsFormFieldPlacehodlers.type}
+                        type="text" />
+                    
+                    <InputField
+                        errors={this.errors('defaultValue')}
+                        key="defaultValue"
+                        onChange={(v) => this.valueChanged(ParamsFormFields.defaultValue, v)}
+                        label={ParamsFormFieldLabels.defaultValue}
+                        value={data.defaultValue || ''}
+                        placeholder={ParamsFormFieldPlacehodlers.defaultValue}
                         type="text" />
                   
-                    <SelectOption
-                        options={[
-                            { id: 'optional_yes', name: 'Yes' },
-                            { id: 'optional_no', name: 'No' }
+                  <RadioButton
+                        title={ParamsFormFieldLabels.optional}
+                        items={[
+                            { id: 'optional_yes', label: 'true', selected: this.getOverrides(data.optional, true) },
+                            { id: 'optional_no', label: 'false', selected: this.getOverrides(data.optional, false) }
                         ]}
-                        id=""
-                        onChange={(v) => this.valueChanged(ParamsFormFields.optional, v)}
-                        defaultOption=""
-                        key="optional"
-                        label={ParamsFormFieldLabels.optional}
-                        name="optional"
+                        onChange={(item) => {
+                            this.valueChanged(ParamsFormFields.optional, item.label)
+                        }}
                     />
 
                     <SubmitButton

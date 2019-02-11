@@ -52,7 +52,9 @@ class BaseCodeBox extends Component<CodeBoxProps> {
      */
     toParam( param: Params , index: number , array: Params[] ): string {
             const name = param.name === undefined ?  '' : `${param.name} `
-            return `${name}${param.label}: ${this.toOptional(param.value, param.optional)}`
+            const stringIfy = param.type === 'String' ? `"${param.defaultValue}"` : param.defaultValue
+            const defaultValue = param.defaultValue === undefined ? '' : ` = ${stringIfy}`
+            return `${name}${param.label}: ${this.toOptional(param.type, param.optional)}${defaultValue}`
     }
 
     /**

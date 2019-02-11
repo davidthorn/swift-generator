@@ -139,7 +139,6 @@ export class PropertiesListFeature extends Component<PropertiesListFeatureProps,
     }
 
     protected updateProperty(property: MethodProperty ) {
-        console.log('updating property in property list feature')
         let properties = this.state.properties
 
         if(properties.filter(i => i.id === property.id).length !== 1) {

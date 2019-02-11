@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { MethodsListFeature } from "../../features/Methods/MethodsList.feature";
 import { MethodsListFeatureViews } from "../../features/Methods/MethodsListFeatureViews";
-import { AccessLevel, accessLevelTypesOptions } from "../../resources/accessLevelType";
+import { AccessLevel, accessLevelTypesOptions, accessLevelTypesRadioOptions } from "../../resources/accessLevelType";
 import { DataStructure, RawDataStructure } from "../../resources/dataStructure";
-import { DataStructureType, dataStructureTypesOptions } from "../../resources/dataStructureType";
+import { DataStructureType, dataStructureTypesOptions, dataStructureTypesRadioOptions } from "../../resources/dataStructureType";
 import { MethodProperty, RawMethodProperty } from "../../resources/MethodProperty";
 import { MethodBlock } from "../../resources/methods";
 import { FieldError } from "../Form";
@@ -16,6 +16,7 @@ import { MethodBlockForm } from "../MethodForm/MethodForm";
 import { MethodPropertyForm } from "../PropertyForm/PropertyForm";
 import { PropertiesListFeature } from "../../features/Properties/PropertiesList.feature";
 import { PropertiesListFeatureViews } from "../../features/Properties/PropertiesListFeatureViews";
+import RadioButton from "../RadioButton/RadioButton";
 
 enum DataStructureFormFields {
     name = 'name',
@@ -65,6 +66,7 @@ interface DataStructureFormState {
     propertyFormActive: boolean,
     methodParams?: MethodBlock,
     propertyParams?: RawMethodProperty
+    isPersisted: boolean
 }
 
 
@@ -76,7 +78,8 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
             structure: props.structure,
             errors: {},
             methodFormActive: false,
-            propertyFormActive: false
+            propertyFormActive: false,
+            isPersisted: props.isPersisted
         }
 
     }
@@ -86,7 +89,14 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         const { error, value } = DataStructureValidate(this.state.structure)
 
         if (error === null) {
-            this.props.onSubmit(value as DataStructure, true)
+            const shouldRedirect = this.state.isPersisted
+            this.setState({
+                ...this.state,
+                isPersisted: true
+            }, () => {
+                this.props.onSubmit(value as DataStructure, shouldRedirect)
+            })
+            
         } else {
 
             let newErrors: { [key: string]: FieldError[] } = {}
@@ -130,10 +140,10 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         this.setState((state) => {
             switch (key) {
                 case DataStructureFormFields.type:
-                    state.structure[key] = (value as string).split('_')[1] as DataStructureType
+                    state.structure[key] = value as DataStructureType
                     break
                 case DataStructureFormFields.accessLevel:
-                    state.structure[key] = (value as string).split('_')[1] as AccessLevel
+                    state.structure[key] = value as AccessLevel
                     break;
                 case DataStructureFormFields.extends:
                     const extends_value = (value as string).trim()
@@ -169,6 +179,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         const data = this.state.structure
         return (
             <React.Fragment>
+
                 <InputField
                     errors={this.errors('name')}
                     key="name"
@@ -177,26 +188,6 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     value={data.name || ''}
                     placeholder={DataStructureFieldPlaceholder.name}
                     type="text" />
-
-                <SelectOption
-                    key="type"
-                    options={dataStructureTypesOptions}
-                    id=""
-                    onChange={(v) => this.valueChanged(DataStructureFormFields.type, v)}
-                    defaultOption=""
-                    label={DataStructureFieldLabels.type}
-                    name=""
-                />
-
-                <SelectOption
-                    options={accessLevelTypesOptions}
-                    id=""
-                    onChange={(v) => this.valueChanged(DataStructureFormFields.accessLevel, v)}
-                    defaultOption=""
-                    key="accessLevel"
-                    label={DataStructureFieldLabels.accessLevel}
-                    name=""
-                />
 
                 <InputField
                     errors={this.errors('extends')}
@@ -215,6 +206,29 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     key="implements"
                     placeholder={DataStructureFieldPlaceholder.implements}
                     type="text" />
+
+                <RadioButton
+                    title={DataStructureFieldLabels.type}
+                    items={dataStructureTypesRadioOptions.map(i => {
+                        i.selected = data.type === i.label
+                        return i
+                    })}
+                    onChange={(item) => {
+                        this.valueChanged(DataStructureFormFields.type, item.label)
+                    }}
+                />
+
+                <RadioButton
+                    title={DataStructureFieldLabels.accessLevel}
+                    items={accessLevelTypesRadioOptions.map(item => {
+                        item.selected = data.accessLevel === item.label
+                        return item
+                    })}
+                    onChange={(item) => {
+                        this.valueChanged(DataStructureFormFields.accessLevel, item.label)
+                    }}
+                />
+
             </React.Fragment>
 
         )
@@ -246,8 +260,8 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                             return {
                                 ...state,
                                 structure: struct,
-                                methodParams: undefined,
-                                methodFormActive: false
+                                methodParams: redirect ? undefined : updatedMethod,
+                                methodFormActive: !redirect
                             }
                         }, () => {
                             this.props.onSubmit(this.state.structure as DataStructure, false)
@@ -286,17 +300,17 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
 
                 }}
                 methods={this.state.structure.methods}
-                updated={(methods) => {
+                updated={(methods, redirect) => {
                     this.setState((state) => {
                         state.structure.methods = methods
                         return {
                             ...state,
-                            methodFormActive: false,
-                            methodParams: undefined,
+                            methodFormActive: !redirect,
+                            methodParams: !redirect ? state.methodParams : undefined,
                             structure: state.structure
                         }
                     }, () => {
-                        this.props.onSubmit(this.state.structure as DataStructure, true)
+                        this.props.onSubmit(this.state.structure as DataStructure, redirect)
                     })
                 }}
             />
@@ -311,8 +325,6 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     property={property}
                     onSubmit={(updatedProperty) => {
                         this.setState((state) => {
-
-                            console.log('added new property', updatedProperty)
                             const struct = state.structure
                             struct.properties = struct.properties.map(i => i.id === updatedProperty.id ? updatedProperty : i)
                             return {
@@ -335,7 +347,6 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
 
                 deleteButtonPressed={this.props.deletePropertyButtonPressed}
                 editButtonPressed={(property) => {
-                    console.log('edit button pressed')
                     this.setState((state) => {
                         return {
                             ...state,
@@ -353,7 +364,6 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                     })
                 }}
                 addButtonPressed={(completion) => {
-                    console.log('add button pressed')
                     this.setState(() => {
                         return {
                             propertyFormActive: true
@@ -408,7 +418,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                 </div>
                 <div className="form-section-inner">
                     {this.formElements(this.state.methodFormActive || this.state.propertyFormActive)}
-                    {this.additionalOptions(this.props.isPersisted) }
+                    {this.additionalOptions(this.state.isPersisted)}
                     {this.formButton(this.state.methodFormActive || this.state.propertyFormActive)}
                 </div>
             </div>

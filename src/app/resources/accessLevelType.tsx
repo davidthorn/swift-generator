@@ -15,4 +15,12 @@ const accessLevelTypesOptions: { id: string, name: string }[] = accessLevelTypes
     }
 })
 
-export { accessLevelTypes, accessLevelTypesOptions, AccessLevel }
+const accessLevelTypesRadioOptions: { id: string, label: string , selected: boolean }[] = accessLevelTypes.map(i => {
+    return {
+        id: `accessLevel_${i}`,
+        label: i,
+        selected: false
+    }
+})
+
+export { accessLevelTypes,accessLevelTypesRadioOptions, accessLevelTypesOptions, AccessLevel }

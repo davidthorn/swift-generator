@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AccessLevel, accessLevelTypesOptions } from "../../resources/accessLevelType";
+import { AccessLevel, accessLevelTypesOptions, accessLevelTypesRadioOptions } from "../../resources/accessLevelType";
 import { MethodProperty, RawMethodProperty } from "../../resources/MethodProperty";
 import { FieldError } from "../Form";
 import InputField from "../InputField/InputField.component";
@@ -7,6 +7,8 @@ import { SelectOption } from "../select-option/SelectOption";
 import { SubmitButton } from "../SubmitButton/SubmitButton";
 import { MethodPropertyValidate } from "./Validate";
 import uuid from 'uuid'
+import RadioButton from "../RadioButton/RadioButton";
+import { arcTypesRadioOptions, ARCTypes } from "../../resources/dataStructureType";
 
 enum MethodPropertyFormFields {
     arc = "arc",
@@ -77,17 +79,14 @@ export class MethodPropertyForm extends Component<MethodPropertyFormProps, Metho
     }
 
     validate() {
-        console.log('submitted method', this.state.property)
         const { error, value } = MethodPropertyValidate(this.state.property)
 
         if (error === null) {
             if (value.id === undefined) {
                 value.id = uuid.v4()
             }
-            console.log('no errors')
             this.props.onSubmit(value as MethodProperty)
         } else {
-            console.log('no errors', error)
             let newErrors: { [key: string]: FieldError[] } = {}
 
             error.details.reduce((p, q) => {
@@ -126,38 +125,33 @@ export class MethodPropertyForm extends Component<MethodPropertyFormProps, Metho
      * @memberof MethodPropertyForm
      */
     valueChanged(key: MethodPropertyFormFields, value?: MethodPropertyFormAllowedFieldValues) {
-        console.log('value', {
-            key: key,
-            value
-        })
         this.setState((state) => {
             switch (key) {
                 case MethodPropertyFormFields.access:
-                    state.property[key] = (value as string).split('_')[1] as AccessLevel
+                    state.property[key] = value as AccessLevel
                     break;
                 case MethodPropertyFormFields.overrides:
-                    const result: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    const result: boolean = value === 'true' ? true : false
                     state.property[key] = result
                     break;
                 case MethodPropertyFormFields.readOnly:
-                    const result_readOnly: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    const result_readOnly: boolean = value === 'true' ? true : false
                     state.property[key] = result_readOnly
                     break;
                 case MethodPropertyFormFields.arc:
-                    const result_arc: 'unowned' | 'none'  | 'weak' = (value as string).split('_')[1] as 'unowned' | 'none'  | 'weak'
+                    const result_arc: ARCTypes = value as ARCTypes
                     state.property[key] = result_arc
                     break;
                 case MethodPropertyFormFields.optional:
-                    const result_optional: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    const result_optional: boolean = value === 'true' ? true : false
                     state.property[key] = result_optional
                     break;
                 case MethodPropertyFormFields.lazy:
-                    const result_lazy: boolean = (value as string).split('_')[1] === 'yes' ? true : false
+                    const result_lazy: boolean = value === 'true' ? true : false
                     state.property[key] = result_lazy
                 default:
                     state.property[key] = (value as string | undefined)
             }
-
             return state
         })
     }
@@ -175,6 +169,10 @@ export class MethodPropertyForm extends Component<MethodPropertyFormProps, Metho
         return _errors.map(i => {
             return i.error!
         })
+    }
+
+    getOverrides(value: boolean | undefined, equals: boolean): boolean {
+        return value === undefined ? false === equals : value === equals
     }
 
     /**
@@ -222,80 +220,75 @@ export class MethodPropertyForm extends Component<MethodPropertyFormProps, Metho
                         placeholder={MethodPropertyFormFieldPlacehodlers.defaultValue}
                         type="text" />
 
-                    <SelectOption
-                        options={[
-                            { id: 'arc_none' , name: 'none' },
-                            { id: 'arc_unowned' , name: 'unowned' },
-                            { id: 'arc_weak' , name: 'weak' }
-                        ]}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodPropertyFormFields.arc, v)}
-                        defaultOption=""
-                        key="arc"
-                        label={MethodPropertyFormFieldLabels.arc}
-                        name="arc"
+                    <RadioButton
+                        title={MethodPropertyFormFieldLabels.access}
+                        items={accessLevelTypesRadioOptions.map(item => {
+                            item.selected = data.access === item.label
+                            return item
+                        })}
+                        onChange={(item) => {
+                            this.valueChanged(MethodPropertyFormFields.access, item.label)
+                        }}
                     />
 
-                    <SelectOption
-                        options={accessLevelTypesOptions}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodPropertyFormFields.access, v)}
-                        defaultOption=""
-                        key="access"
-                        label={MethodPropertyFormFieldLabels.access}
-                        name="access"
+                    <RadioButton
+                        title={MethodPropertyFormFieldLabels.arc}
+                        items={arcTypesRadioOptions.map(item => {
+                            item.selected = (data.arc === undefined ? ARCTypes.none : data.arc) === item.label
+                            return item
+                        })}
+                        onChange={(item) => {
+                            this.valueChanged(MethodPropertyFormFields.arc, item.label)
+                        }}
                     />
 
-                    <SelectOption
-                        options={[
-                            { id: 'overrides_yes', name: 'Yes' },
-                            { id: 'overrides_no', name: 'No' }
+                    <RadioButton
+                        title={MethodPropertyFormFieldLabels.overrides}
+                        items={[
+                            { id: 'yes', label: 'true', selected: this.getOverrides(data.overrides, true) },
+                            { id: 'no', label: 'false', selected: this.getOverrides(data.overrides, false) }
                         ]}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodPropertyFormFields.overrides, v)}
-                        defaultOption=""
-                        key="overrides"
-                        label={MethodPropertyFormFieldLabels.overrides}
-                        name=""
+                        onChange={(item) => {
+                            this.valueChanged(MethodPropertyFormFields.overrides, item.label)
+                        }}
+
                     />
 
-                    <SelectOption
-                        options={[
-                            { id: 'optional_yes', name: 'Yes' },
-                            { id: 'optional_no', name: 'No' }
+                    <RadioButton
+                        title={MethodPropertyFormFieldLabels.optional}
+                        items={[
+                            { id: 'optional_yes', label: 'true', selected: this.getOverrides(data.optional, true) },
+                            { id: 'optional_no', label: 'false', selected: this.getOverrides(data.optional, false) }
                         ]}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodPropertyFormFields.optional, v)}
-                        defaultOption=""
-                        key="optional"
-                        label={MethodPropertyFormFieldLabels.optional}
-                        name="optional"
+                        onChange={(item) => {
+                            this.valueChanged(MethodPropertyFormFields.optional, item.label)
+                        }}
+
                     />
 
-                    <SelectOption
-                        options={[
-                            { id: 'lazy_yes', name: 'Yes' },
-                            { id: 'lazy_no', name: 'No' }
+
+                    <RadioButton
+                        title={MethodPropertyFormFieldLabels.lazy}
+                        items={[
+                            { id: 'lazy_yes', label: 'true', selected: this.getOverrides(data.lazy, true) },
+                            { id: 'lazy_no', label: 'false', selected: this.getOverrides(data.lazy, false) }
                         ]}
-                        id=""
-                        onChange={(v) => this.valueChanged(MethodPropertyFormFields.lazy, v)}
-                        defaultOption=""
-                        key="lazy"
-                        label={MethodPropertyFormFieldLabels.lazy}
-                        name="lazy"
+                        onChange={(item) => {
+                            this.valueChanged(MethodPropertyFormFields.lazy, item.label)
+                        }}
+
                     />
 
-                    <SelectOption
-                        options={[
-                            { id: 'readOnly_yes', name: 'Yes' },
-                            { id: 'readOnly_no', name: 'No' }
+                    <RadioButton
+                        title={MethodPropertyFormFieldLabels.readOnly}
+                        items={[
+                            { id: 'readOnly_yes', label: 'true', selected: this.getOverrides(data.readOnly, true) },
+                            { id: 'readOnly_no', label: 'false', selected: this.getOverrides(data.readOnly, false) }
                         ]}
-                        id="readOnly"
-                        onChange={(v) => this.valueChanged(MethodPropertyFormFields.readOnly, v)}
-                        defaultOption=""
-                        key="readOnly"
-                        label={MethodPropertyFormFieldLabels.readOnly}
-                        name="readOnly"
+                        onChange={(item) => {
+                            this.valueChanged(MethodPropertyFormFields.readOnly, item.label)
+                        }}
+
                     />
 
                     <SubmitButton

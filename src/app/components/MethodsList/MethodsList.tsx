@@ -23,7 +23,6 @@ export default class MethodsList extends Component<MethodsListProps, MethodsList
     }
 
     deleteMethod(method: MethodBlock) {
-        console.log('')
         const _save_methods = this.state.methods.filter(i => i.id !== method.id)
         this.setState({
             methods: _save_methods

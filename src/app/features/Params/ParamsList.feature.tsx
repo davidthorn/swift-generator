@@ -161,7 +161,6 @@ export class ParamsListFeature extends Component<ParamsListFeatureProps, ParamsL
                 params: params
             }
         }, () => {
-            
             this.props.updated(this.state.params)
         })
 

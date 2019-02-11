@@ -5,6 +5,12 @@ enum DataStructureType {
     protocol= "protocol" 
 }
 
+export enum ARCTypes {
+    none = "none",
+    weak = "weak",
+    unowned = "unowned"
+}
+
 const keys = Object.values(DataStructureType)
 
 const dataStructureTypes: string[] = keys.map((i) => {
@@ -18,4 +24,23 @@ const dataStructureTypesOptions: { id: string, name: string }[] = dataStructureT
     }
 })
 
-export { dataStructureTypes, dataStructureTypesOptions,DataStructureType }
+const dataStructureTypesRadioOptions: { id: string, label: string , selected: boolean }[] = dataStructureTypes.map(i => {
+    return {
+        id: `type_${i}`,
+        label: i,
+        selected: false
+    }
+})
+
+
+
+const arcTypesRadioOptions: { id: string, label: string , selected: boolean }[] = Object.values(ARCTypes).map(i => {
+    return {
+        id: `type_${i}`,
+        label: i,
+        selected: false
+    }
+})
+
+
+export { dataStructureTypes, dataStructureTypesOptions,DataStructureType,dataStructureTypesRadioOptions, arcTypesRadioOptions }
