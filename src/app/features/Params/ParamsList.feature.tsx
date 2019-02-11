@@ -51,24 +51,19 @@ export class ParamsListFeature extends Component<ParamsListFeatureProps, ParamsL
      * @memberof ParamsListFeature
      */
     navigate(page: ParamsListFeatureViews , params?: RawParams) {
-       const d = this.state
-       
-       this.setState({
-           formParams: {}
-       })
-        // this.setState((state) => {
-        //     return {
-        //         //...state,
-        //         prevView: page === ParamsListFeatureViews.form ? [this.state.view] : [],
-        //         formParams: params,
-        //         //view: page,
-        //     }
-        // })
-        // this.setState({
-        //     prevView: page === ParamsListFeatureViews.form ? [this.state.view] : [],
-        //     view: page,
-        //     formParams: params
-        // })
+         this.setState((state) => {
+            return {
+                ...state,
+                prevView: page === ParamsListFeatureViews.form ? [this.state.view] : [],
+                formParams: params,
+                view: page,
+            }
+        })
+        this.setState({
+            prevView: page === ParamsListFeatureViews.form ? [this.state.view] : [],
+            view: page,
+            formParams: params
+        })
     }
 
    
@@ -151,26 +146,24 @@ export class ParamsListFeature extends Component<ParamsListFeatureProps, ParamsL
     }
 
     protected updateProperty(param: Params ) {
-     
-        console.log('updateProperty params list feature', param)
-        // let params = this.state.params
+        let params = this.state.params
+        if(params.filter(i => i.id === param.id).length !== 1) {
+            params.push(param)
+        } else {
+            params = params.map(i => { return i.id === param.id ? param : i })
+        }
 
-        // if(params.filter(i => i.id === param.id).length !== 1) {
-        //     params.push(param)
-        // } else {
-        //     params = params.map(i => { return i.id === param.id ? param : i })
-        // }
-
-        // this.setState((state) => {
-        //     return {
-        //         prevView: state.prevView.splice(0, state.prevView.length - 1),
-        //         view: ParamsListFeatureViews.list,
-        //         formParams: undefined,
-        //         params: params
-        //     }
-        // }, () => {
-        //     this.props.updated(this.state.params)
-        // })
+        this.setState((state) => {
+            return {
+                prevView: state.prevView.splice(0, state.prevView.length - 1),
+                view: ParamsListFeatureViews.list,
+                formParams: undefined,
+                params: params
+            }
+        }, () => {
+            
+            this.props.updated(this.state.params)
+        })
 
     }
 
@@ -191,13 +184,6 @@ export class ParamsListFeature extends Component<ParamsListFeatureProps, ParamsL
                 onSubmit={this.updateProperty.bind(this)}
                 />
                 )
-                // return (<div>
-
-                //     <div className="save-method-button" onClick={() => {
-                //         this.navigate(ParamsListFeatureViews.list);
-                //     }}>Save Button</div>
-
-                // </div>);
             case ParamsListFeatureViews.list:
                 return (<div className="methods-list-wrapper">
                     <ParamsList 

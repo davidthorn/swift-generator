@@ -34,7 +34,7 @@ type ParamsFormAllowedFieldValues = undefined | string | boolean
 
 interface ParamsFormProps {
     params: RawParams
-    onSubmit: (property: Params) => void
+    onSubmit: (params: Params) => void
 }
 
 interface ParamsFormState {
@@ -54,7 +54,6 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
 
     constructor(props: ParamsFormProps, state: ParamsFormState) {
         super(props, state)
-        console.log('received params' , props.params)
         this.state = {
             params: props.params,
             errors: {}
@@ -64,18 +63,15 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
 
     validate() {
 
-        console.log('params for state' , this.state.params)
-
         const { error, value } = ParamsValidate(this.state.params)
 
         if (error === null) {
             if (value.id === undefined) {
                 value.id = uuid.v4()
             }
-            
+
             this.props.onSubmit(value as Params)
         } else {
-            console.log('no errors', error)
             let newErrors: { [key: string]: FieldError[] } = {}
 
             error.details.reduce((p, q) => {
@@ -204,10 +200,8 @@ export class ParamsForm extends Component<ParamsFormProps, ParamsFormState> {
 
                     <SubmitButton
                         key="submit_button"
-                        title={ParamsFormFieldLabels.submit}
-                        onPress={() => {
-                            this.validate()
-                        }}
+                        title="Save Params Form"
+                        onPress={this.validate.bind(this)}
                     >
 
                     </SubmitButton>

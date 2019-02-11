@@ -74,17 +74,14 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
     }
 
     validate() {
-        console.log('submitted method', this.state.method)
         const { error, value } = MethodBlockValidate(this.state.method)
 
         if (error === null) {
             if (value.id === undefined) {
                 value.id = uuid.v4()
             }
-            console.log('no errors')
             this.props.onSubmit(value as MethodBlock , false)
         } else {
-            console.log('no errors', error)
             let newErrors: { [key: string]: FieldError[] } = {}
 
             error.details.reduce((p, q) => {
@@ -123,10 +120,6 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
      * @memberof MethodBlockForm
      */
     valueChanged(key: MethodBlockFormFields, value?: MethodBlockFormAllowedFieldValues) {
-        console.log('value', {
-            key: key,
-            value
-        })
         this.setState((state) => {
             switch (key) {
                 case MethodBlockFormFields.accessLevel:
@@ -162,7 +155,7 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
         })
     }
 
-    protected paramsList(methodFormActive: boolean, paramsData?: RawParams): JSX.Element {
+    protected paramsList(paramsFormActive: boolean, paramsData?: RawParams): JSX.Element {
 
         if (paramsData !== undefined) {
             return (
@@ -206,7 +199,6 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
                     })
                 }}
                 editButtonPressed={(params) => {
-                    console.log('edit button pressed')
                     this.setState((state) => {
                         return {
                             ...state,
@@ -215,7 +207,7 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
                         }
                     })
                 }}
-                view={methodFormActive === true ? ParamsListFeatureViews.form : ParamsListFeatureViews.list}
+                view={paramsFormActive === true ? ParamsListFeatureViews.form : ParamsListFeatureViews.list}
                 backButtonPressed={() => {
                     this.setState(() => {
                         return {
@@ -227,17 +219,15 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
                     console.log('add button pressed')
                     this.setState((state) => {
                         return {
-                            ...state,
-                            paramsFormActive: true,
-                            paramsData: {}
+                            paramsFormActive: true
                         }
-                    }, completion)
+                    },completion)
 
                 }}
                 params={this.state.method.params}
                 updated={(updatedParams) => {
-                    this.setState((state) => {
-                        console.log('updated state in method form for params' , state)
+                       this.setState((state) => {
+                        
                         state.method.params = updatedParams
                         return {
                             ...state,
