@@ -155,8 +155,8 @@ export class MethodBlockForm extends Component<MethodBlockFormProps, MethodBlock
         })
     }
 
-    protected paramsList(paramsFormActive: boolean, paramsData?: RawParams): JSX.Element {
-
+    protected paramsList(paramsFormActive: boolean, paramsData?: RawParams): JSX.Element | undefined {
+        if(this.state.method.id === undefined) return undefined
         if (paramsData !== undefined) {
             return (
                 <ParamsForm

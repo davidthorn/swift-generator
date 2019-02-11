@@ -49,6 +49,7 @@ enum DataStructureFieldPlaceholder {
 type DataStructureFormAllowedFieldValues = undefined | string | AccessLevel | DataStructureType | MethodProperty[] | string[] | MethodBlock[]
 
 interface DataStructureFormProps {
+    isPersisted: boolean
     editPropertyButtonPressed: (property: MethodProperty) => void
     deletePropertyButtonPressed: (property: MethodProperty) => void
     editButtonPressed: (method: MethodBlock) => void
@@ -85,7 +86,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
         const { error, value } = DataStructureValidate(this.state.structure)
 
         if (error === null) {
-            this.props.onSubmit(value as DataStructure , true)
+            this.props.onSubmit(value as DataStructure, true)
         } else {
 
             let newErrors: { [key: string]: FieldError[] } = {}
@@ -234,27 +235,27 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
 
     protected methodsList(methodFormActive: boolean, method?: MethodBlock): JSX.Element {
 
-        if(method !== undefined) {
+        if (method !== undefined) {
             return (
                 <MethodBlockForm
-                method={method}
-                onSubmit={(updatedMethod, redirect) => {
-                    this.setState((state) => {
-                        const struct =  state.structure
-                        struct.methods = struct.methods.map(i => i.id === updatedMethod.id ? updatedMethod : i)
-                        return {
-                            ...state,
-                            structure: struct,
-                            methodParams: undefined,
-                            methodFormActive: false
-                        }
-                    }, () => {
-                        this.props.onSubmit(this.state.structure as DataStructure, false)
-                    })
-                }}
+                    method={method}
+                    onSubmit={(updatedMethod, redirect) => {
+                        this.setState((state) => {
+                            const struct = state.structure
+                            struct.methods = struct.methods.map(i => i.id === updatedMethod.id ? updatedMethod : i)
+                            return {
+                                ...state,
+                                structure: struct,
+                                methodParams: undefined,
+                                methodFormActive: false
+                            }
+                        }, () => {
+                            this.props.onSubmit(this.state.structure as DataStructure, false)
+                        })
+                    }}
                 />
             )
-        } 
+        }
 
         return (
             <MethodsListFeature
@@ -295,7 +296,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                             structure: state.structure
                         }
                     }, () => {
-                        this.props.onSubmit(this.state.structure as DataStructure , true)
+                        this.props.onSubmit(this.state.structure as DataStructure, true)
                     })
                 }}
             />
@@ -304,29 +305,29 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
 
     protected propertyList(methodFormActive: boolean, property?: RawMethodProperty): JSX.Element {
 
-        if(property !== undefined) {
+        if (property !== undefined) {
             return (
                 <MethodPropertyForm
-                property={property}
-                onSubmit={(updatedProperty) => {
-                    this.setState((state) => {
-                      
-                        console.log('added new property', updatedProperty)
-                        const struct =  state.structure
-                        struct.properties = struct.properties.map(i => i.id === updatedProperty.id ? updatedProperty : i)
-                        return {
-                            ...state,
-                            structure: struct,
-                            propertyParams: undefined,
-                            propertyFormActive: false
-                        }
-                    }, () => {
-                        this.props.onSubmit(this.state.structure as DataStructure, false)
-                    })
-                }}
+                    property={property}
+                    onSubmit={(updatedProperty) => {
+                        this.setState((state) => {
+
+                            console.log('added new property', updatedProperty)
+                            const struct = state.structure
+                            struct.properties = struct.properties.map(i => i.id === updatedProperty.id ? updatedProperty : i)
+                            return {
+                                ...state,
+                                structure: struct,
+                                propertyParams: undefined,
+                                propertyFormActive: false
+                            }
+                        }, () => {
+                            this.props.onSubmit(this.state.structure as DataStructure, false)
+                        })
+                    }}
                 />
             )
-        } 
+        }
 
         return (
 
@@ -371,10 +372,21 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                             structure: state.structure
                         }
                     }, () => {
-                        this.props.onSubmit(this.state.structure as DataStructure , false)
+                        this.props.onSubmit(this.state.structure as DataStructure, false)
                     })
                 }}
             />
+        )
+    }
+
+    protected additionalOptions(isSaved: boolean): JSX.Element | undefined {
+        if (!isSaved) return undefined
+        return (
+            <React.Fragment>
+                {this.state.methodFormActive ? undefined : this.propertyList(this.state.propertyFormActive, this.state.propertyParams)}
+                {this.state.propertyFormActive ? undefined : this.methodsList(this.state.methodFormActive, this.state.methodParams)}
+            </React.Fragment>
+
         )
     }
 
@@ -396,8 +408,7 @@ export default class DataStructureForm extends Component<DataStructureFormProps,
                 </div>
                 <div className="form-section-inner">
                     {this.formElements(this.state.methodFormActive || this.state.propertyFormActive)}
-                    {this.state.methodFormActive ? undefined : this.propertyList(this.state.propertyFormActive, this.state.propertyParams)}
-                    {this.state.propertyFormActive ? undefined : this.methodsList(this.state.methodFormActive, this.state.methodParams)}
+                    {this.additionalOptions(this.props.isPersisted) }
                     {this.formButton(this.state.methodFormActive || this.state.propertyFormActive)}
                 </div>
             </div>

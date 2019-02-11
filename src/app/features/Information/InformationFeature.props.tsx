@@ -10,6 +10,8 @@ import { MethodProperty } from "../../resources/MethodProperty";
  */
 export interface InformationFeatureProps {
 
+    isPersisted: boolean
+
     /**
      * The data structure which is used
      *

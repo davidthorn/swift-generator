@@ -106,6 +106,10 @@ class HomeFeature extends Component<HomeProps, HomeState> {
 
     }
 
+    protected isPersistedInStorage(): boolean {
+        return localStorage.getItem('structure') !== null
+    }
+
     /**
      * Deletes the method from the structure
      *
@@ -185,6 +189,7 @@ class HomeFeature extends Component<HomeProps, HomeState> {
     protected getInformationFeature(): JSX.Element {
         return (
             <InformationFeature
+                isPersisted={this.isPersistedInStorage()}
                 deletePropertyButtonPressed={this.deleteProperty.bind(this)}
                 editPropertyButtonPressed={this.editProperty.bind(this)}
                 deleteButtonPressed={this.deleteMethod.bind(this)}

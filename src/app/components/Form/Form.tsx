@@ -11,6 +11,7 @@ import { MethodProperty } from "../../resources/MethodProperty";
  * @interface FormComponentProps
  */
 interface FormComponentProps {
+    isPersisted: boolean
     editPropertyButtonPressed: (property: MethodProperty) => void
     deletePropertyButtonPressed: (property: MethodProperty) => void
     editButtonPressed: (method: MethodBlock) => void
@@ -58,6 +59,7 @@ export class FormComponent extends Component<FormComponentProps, FormComponentSt
             
            <div className="form-group">
                 <DataStructureForm 
+                isPersisted={this.props.isPersisted}
                 editPropertyButtonPressed={this.props.editPropertyButtonPressed}
                 deletePropertyButtonPressed={this.props.deletePropertyButtonPressed}
                 editButtonPressed={this.props.editButtonPressed}

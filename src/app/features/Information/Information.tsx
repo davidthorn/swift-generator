@@ -32,6 +32,7 @@ export class InformationFeature extends Component<InformationFeatureProps, Infor
     render() {
         return (
             <DataStructureForm
+                isPersisted={this.props.isPersisted}
                 deletePropertyButtonPressed={this.props.deletePropertyButtonPressed}
                 editPropertyButtonPressed={this.props.editPropertyButtonPressed}
                 deleteButtonPressed={this.props.deleteButtonPressed}
